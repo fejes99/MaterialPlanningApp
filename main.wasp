@@ -7,13 +7,16 @@ app TestApp {
     ("@tailwindcss/forms", "^0.5.7"),
     ("@tailwindcss/typography", "^0.5.10"),
     ("@headlessui/react", "1.7.18"),
-    ("@heroicons/react", "2.1.1")
-
+    ("@heroicons/react", "2.1.1"),
+    ("flowbite-react", "0.7.2"),
   ],
+  client: {
+    rootComponent: import Root from "@client/RootPage.tsx"
+  }
 }
 
-route RootRoute { path: "/", to: Main }
-page Main {
+route RootRoute { path: "/", to: MainPage }
+page MainPage {
   component: import Main from "@client/MainPage.tsx"
 }
 
@@ -25,6 +28,24 @@ entity Material {=psl
   measurementUnit String
   products        ProductMaterials[]
 psl=}
+
+crud Materials {
+  entity: Material,
+  operations: {
+    getAll: {
+      overrideFn: import { getMaterials } from "@server/tasks.js"
+    },
+    get: {},
+    create: {},
+    update: {},
+    delete: {}
+  }
+}
+
+route MaterialRoute {path: "/materials", to: MaterialPage }
+page MaterialPage {
+  component: import Material from "@client/pages/MaterialPage.tsx"
+}
 
 entity Product {=psl
   id              Int    @id @default(autoincrement())
