@@ -1,0 +1,68 @@
+app TestApp {
+  wasp: {
+    version: "^0.11.8"
+  },
+  title: "Material Planning",
+  dependencies: [
+    ("@tailwindcss/forms", "^0.5.7"),
+    ("@tailwindcss/typography", "^0.5.10"),
+    ("@headlessui/react", "1.7.18"),
+    ("@heroicons/react", "2.1.1")
+
+  ],
+}
+
+route RootRoute { path: "/", to: Main }
+page Main {
+  component: import Main from "@client/MainPage.tsx"
+}
+
+entity Material {=psl
+  id              Int    @id @default(autoincrement())
+  code            String @unique
+  name            String
+  count           Int
+  measurementUnit String
+  products        ProductMaterials[]
+psl=}
+
+entity Product {=psl
+  id              Int    @id @default(autoincrement())
+  code            String @unique
+  name            String
+  description     String
+  materials       ProductMaterials[]
+  productionPlans ProductionPlanProducts[]
+psl=}
+
+entity ProductMaterials {=psl
+  product                 Product  @relation(fields: [productId], references: [id])
+  productId               Int
+  material                Material @relation(fields: [materialId], references: [id])
+  materialId              Int
+  materialCount           Int
+  measurementUnit         String
+  
+  @@id([productId, materialId])
+psl=}
+
+entity ProductionPlan {=psl
+  id         Int    @id @default(autoincrement())
+  code       String @unique
+  createdAt  DateTime @default(now())
+  createdFor DateTime
+  status     String
+  products   ProductionPlanProducts[]
+psl=}
+
+entity ProductionPlanProducts {=psl
+  productionPlan   ProductionPlan @relation(fields: [productionPlanId], references: [id])
+  productionPlanId Int
+  product          Product  @relation(fields: [productId], references: [id])
+  productId        Int
+  productCount     Int
+  
+  @@id([productionPlanId, productId])
+psl=}
+
+
