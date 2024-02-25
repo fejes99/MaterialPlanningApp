@@ -1,13 +1,16 @@
 import React from 'react';
-import { Material } from '@wasp/entities';
+import { Material, ProductMaterials } from '@wasp/entities';
 import { Checkbox, Table } from 'flowbite-react';
 import Dropdown from '../ui/Dropdown/Dropdown';
+import MaterialUpdateModal from './modals/MaterialUpdateModal';
+import MaterialDeleteModal from './modals/MaterialDeleteModal';
 
 type Props = {
   materials: Material[];
 };
 
 const MaterialTable: React.FC<Props> = ({ materials }) => {
+  console.log('🚀 ~ materials:', materials);
   if (!materials?.length) return <div>No materials</div>;
 
   return (
@@ -25,11 +28,16 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
           <Table.HeadCell>Akcije</Table.HeadCell>
         </Table.Head>
         <Table.Body className='divide-y'>
-          {materials.map((material) => {
-            const products: string[] = material.products.map((product) => product.product.name);
+          {materials.map((material: Material) => {
+            const products: string[] = material.productMaterials.map(
+              (productMaterial: ProductMaterials) => productMaterial.product.name
+            );
 
             return (
-              <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+              <Table.Row
+                key={material.id}
+                className='bg-white dark:border-gray-700 dark:bg-gray-800'
+              >
                 <Table.Cell className='p-4'>
                   <Checkbox />
                 </Table.Cell>
@@ -48,13 +56,9 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
                 <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                   <Dropdown label='Proizvodi' values={products} />
                 </Table.Cell>
-                <Table.Cell>
-                  <a
-                    href='#'
-                    className='font-medium text-cyan-600 hover:underline dark:text-cyan-500'
-                  >
-                    Edit
-                  </a>
+                <Table.Cell className='flex justify-around'>
+                  <MaterialUpdateModal material={material} />
+                  <MaterialDeleteModal material={material} />
                 </Table.Cell>
               </Table.Row>
             );

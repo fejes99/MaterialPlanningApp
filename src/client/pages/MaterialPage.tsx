@@ -1,8 +1,7 @@
 import React from 'react';
 import { Materials } from '@wasp/crud/Materials';
-import { Button } from 'flowbite-react';
 import MaterialTable from '../components/materials/MaterialTable';
-import MaterialAddModal from '../components/ui/Modals/MaterialAddModal';
+import MaterialAddModal from '../components/materials/modals/MaterialAddModal';
 
 const MaterialPage: React.FC = () => {
   const { data: materials, isLoading, error } = Materials.getAll.useQuery();

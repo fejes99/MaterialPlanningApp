@@ -15,31 +15,11 @@ app TestApp {
   }
 }
 
+// ----------------- Pages ------------------ //
+
 route RootRoute { path: "/", to: MainPage }
 page MainPage {
   component: import Main from "@client/MainPage.tsx"
-}
-
-entity Material {=psl
-  id              Int    @id @default(autoincrement())
-  code            String @unique
-  name            String
-  count           Int
-  measurementUnit String
-  products        ProductMaterials[]
-psl=}
-
-crud Materials {
-  entity: Material,
-  operations: {
-    getAll: {
-      overrideFn: import { getMaterials } from "@server/tasks.js"
-    },
-    get: {},
-    create: {},
-    update: {},
-    delete: {}
-  }
 }
 
 route MaterialRoute {path: "/materials", to: MaterialPage }
@@ -47,13 +27,25 @@ page MaterialPage {
   component: import Material from "@client/pages/MaterialPage.tsx"
 }
 
-entity Product {=psl
-  id              Int    @id @default(autoincrement())
-  code            String @unique
-  name            String
-  description     String
-  materials       ProductMaterials[]
-  productionPlans ProductionPlanProducts[]
+route ProductRoute {path: "/products", to: ProductPage }
+page ProductPage {
+  component: import Product from "@client/pages/ProductPage.tsx"
+}
+
+route ProductionPlanRoute {path: "/production-plans", to: ProductionPlanPage }
+page ProductionPlanPage {
+  component: import ProductionPlan from "@client/pages/ProductionPlanPage.tsx"
+}
+
+// ----------------- Entities ------------------ //
+
+entity Material {=psl
+  id               Int                @id @default(autoincrement())
+  code             String             @unique
+  name             String
+  count            Int
+  measurementUnit  String
+  productMaterials ProductMaterials[]
 psl=}
 
 entity ProductMaterials {=psl
@@ -67,13 +59,13 @@ entity ProductMaterials {=psl
   @@id([productId, materialId])
 psl=}
 
-entity ProductionPlan {=psl
-  id         Int    @id @default(autoincrement())
-  code       String @unique
-  createdAt  DateTime @default(now())
-  createdFor DateTime
-  status     String
-  products   ProductionPlanProducts[]
+entity Product {=psl
+  id                     Int                      @id @default(autoincrement())
+  code                   String                   @unique
+  name                   String
+  description            String
+  productMaterials       ProductMaterials[]       
+  productionPlanProducts ProductionPlanProducts[]
 psl=}
 
 entity ProductionPlanProducts {=psl
@@ -86,4 +78,46 @@ entity ProductionPlanProducts {=psl
   @@id([productionPlanId, productId])
 psl=}
 
+entity ProductionPlan {=psl
+  id                      Int                      @id @default(autoincrement())
+  code                    String                   @unique
+  createdAt               DateTime                 @default(now())
+  createdFor              DateTime
+  status                  String
+  productionPlanMaterials ProductionPlanProducts[]
+psl=}
 
+// ----------------- User operations ------------------ //
+
+crud Materials {
+  entity: Material,
+  operations: {
+    getAll: {
+      overrideFn: import { getMaterials } from "@server/materials/tasks.js"
+    },
+    get: {},
+    create: {
+      overrideFn: import { createMaterial } from "@server/materials/tasks.js"
+    },
+    update: {
+      overrideFn: import { updateMaterial } from "@server/materials/tasks.js"
+    },
+    delete: {}
+  }
+}
+
+crud Products {
+  entity: Product,
+  operations: {
+    getAll: {
+      overrideFn: import { getProducts } from "@server/products/tasks.js"
+    },
+    get: {},
+    create: {
+      overrideFn: import { createProduct } from "@server/products/tasks.js"
+    },
+    update: {
+      overrideFn: import { updateProduct } from "@server/products/tasks.js"
+    }
+  }
+}

@@ -28,10 +28,10 @@ const MainNavbar: React.FC = () => (
       <Navbar.Link href='/materials' active className='text-lg'>
         Materijali
       </Navbar.Link>
-      <Navbar.Link href='#' className='text-lg'>
+      <Navbar.Link href='/products' className='text-lg'>
         Proizvodi
       </Navbar.Link>
-      <Navbar.Link href='#' className='text-lg'>
+      <Navbar.Link href='/production-plans' className='text-lg'>
         Proizvodni planovi
       </Navbar.Link>
     </Navbar.Collapse>

@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Materials } from '@wasp/crud/Materials';
 import { Button, Label, Modal, TextInput } from 'flowbite-react';
 
 const MaterialAddModal: React.FC = () => {
+  const createMaterial = Materials.create.useAction();
+
   const [openModal, setOpenModal] = useState(false);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
@@ -9,9 +12,23 @@ const MaterialAddModal: React.FC = () => {
 
   const onCloseModal = () => {
     setOpenModal(false);
+    resetFields();
+  };
+
+  const resetFields = () => {
     setCode('');
     setName('');
     setMeasurementUnit('');
+  };
+
+  const handleCreateMaterial = () => {
+    createMaterial({
+      code,
+      name,
+      count: 0,
+      measurementUnit,
+    });
+    resetFields();
   };
 
   return (
@@ -68,7 +85,7 @@ const MaterialAddModal: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className='w-full'>
-            <Button>Dodaj materijal</Button>
+            <Button onClick={handleCreateMaterial}>Dodaj materijal</Button>
           </div>
         </Modal.Footer>
       </Modal>
