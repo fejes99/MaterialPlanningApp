@@ -1,13 +1,18 @@
-type Props = {};
 import { Products } from '@wasp/crud/Products';
+import ProductTable from '../components/products/ProductTable';
+import ProductAddModal from '../components/products/modals/ProductAddModal';
 
 const ProductPage: React.FC = () => {
   const { data: products, isLoading, error } = Products.getAll.useQuery();
-  console.log("🚀 ~ products:", products)
 
   if (isLoading) return 'Loading...';
   if (error) return 'Error: ' + error;
 
-  return <div>ProductPage</div>;
+  return (
+    <>
+      <ProductAddModal />
+      <ProductTable products={products} />
+    </>
+  );
 };
 export default ProductPage;

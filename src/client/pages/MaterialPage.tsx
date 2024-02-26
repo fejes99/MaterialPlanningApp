@@ -5,7 +5,6 @@ import MaterialAddModal from '../components/materials/modals/MaterialAddModal';
 
 const MaterialPage: React.FC = () => {
   const { data: materials, isLoading, error } = Materials.getAll.useQuery();
-  console.log('🚀 ~ materials:', materials);
 
   if (isLoading) return 'Loading...';
   if (error) return 'Error: ' + error;

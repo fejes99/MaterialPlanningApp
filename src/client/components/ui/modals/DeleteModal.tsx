@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { Material } from '@wasp/entities';
-import { Materials } from '@wasp/crud/Materials';
 import { Button, Modal } from 'flowbite-react';
 import { HiOutlineTrash } from 'react-icons/hi';
 
 type Props = {
-  material: Material;
+  label: string;
+  code: string;
+  onDelete: () => Promise<any>;
 };
 
-const MaterialDeleteModal: React.FC<Props> = ({ material }) => {
-  const deleteMaterial = Materials.delete.useAction();
-
+const DeleteModal: React.FC<Props> = ({ label, code, onDelete }) => {
   const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteMaterial = () => {
-    deleteMaterial({ id: material.id });
+    onDelete();
     setOpenModal(false);
   };
 
@@ -41,13 +39,13 @@ const MaterialDeleteModal: React.FC<Props> = ({ material }) => {
       </div>
       <Modal show={openModal} onClose={() => setOpenModal(false)} popup>
         <Modal.Header>
-          Obriši {material.name} ({material.code})
+          Obriši {label} ({code})
         </Modal.Header>
         <Modal.Body>
           <div className='text-center'>
             <HiOutlineTrash className='mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200' />
             <h3 className='mb-5 text-lg font-normal text-gray-500 dark:text-gray-400'>
-              Da li ste sigurni da želite da obrišete materijal?
+              Da li ste sigurni da želite da obrišete stavku?
             </h3>
             <div className='flex justify-center gap-4'>
               <Button color='failure' onClick={handleDeleteMaterial}>
@@ -64,4 +62,4 @@ const MaterialDeleteModal: React.FC<Props> = ({ material }) => {
   );
 };
 
-export default MaterialDeleteModal;
+export default DeleteModal;

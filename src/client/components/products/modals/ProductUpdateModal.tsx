@@ -1,26 +1,22 @@
 import { useState } from 'react';
-import { Material } from '@wasp/entities';
-import { Materials } from '@wasp/crud/Materials';
+import { Product } from '@wasp/entities';
+import { Products } from '@wasp/crud/Products';
 import { Button, Label, Modal, TextInput } from 'flowbite-react';
 
-type Props = {
-  material: Material;
-};
+type Props = { product: Product };
 
-const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
-  const updateMaterial = Materials.update.useAction();
+const ProductUpdateModal: React.FC<Props> = ({ product }) => {
+  const updateProduct = Products.update.useAction();
 
   const [openModal, setOpenModal] = useState(false);
-  const [count, setCount] = useState(material.count);
-  const [measurementUnit, setMeasurementUnit] = useState(material.measurementUnit);
+  const [description, setDescription] = useState(product.description);
 
   const onCloseModal = () => setOpenModal(false);
 
-  const handleUpdateMaterial = () => {
-    updateMaterial({
-      id: material.id,
-      count: parseInt(count),
-      measurementUnit,
+  const handleUpdateProduct = () => {
+    updateProduct({
+      id: product.id,
+      description,
     });
     onCloseModal();
   };
@@ -50,33 +46,19 @@ const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
 
       <Modal show={openModal} onClose={onCloseModal}>
         <Modal.Header>
-          Ažuriraj {material.name} ({material.code})
+          Ažuriraj {product.name} ({product.code})
         </Modal.Header>
         <Modal.Body>
           <div className='space-y-6'>
             <div>
               <div className='mb-2 block'>
-                <Label htmlFor='name' value='Količina materijala' />
+                <Label htmlFor='name' value='Opis proizvoda' />
               </div>
               <TextInput
                 id='name'
-                type='number'
                 placeholder='0'
-                value={count}
-                onChange={(event) => setCount(event.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <div className='mb-2 block'>
-                <Label htmlFor='measurementUnit' value='Merna jedinica materijala' />
-              </div>
-              <TextInput
-                id='measurementUnit'
-                placeholder='g'
-                value={measurementUnit}
-                onChange={(event) => setMeasurementUnit(event.target.value)}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
                 required
               />
             </div>
@@ -84,7 +66,7 @@ const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
         </Modal.Body>
         <Modal.Footer>
           <div className='w-full'>
-            <Button onClick={handleUpdateMaterial}>Ažuriraj materijal</Button>
+            <Button onClick={handleUpdateProduct}>Ažuriraj proizvod</Button>
           </div>
           <Button color='gray' onClick={() => setOpenModal(false)}>
             Poništi
@@ -94,5 +76,4 @@ const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
     </>
   );
 };
-
-export default MaterialUpdateModal;
+export default ProductUpdateModal;

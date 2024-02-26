@@ -25,7 +25,7 @@ const MainNavbar: React.FC = () => (
       <Navbar.Toggle />
     </div>
     <Navbar.Collapse>
-      <Navbar.Link href='/materials' active className='text-lg'>
+      <Navbar.Link href='/materials' className='text-lg'>
         Materijali
       </Navbar.Link>
       <Navbar.Link href='/products' className='text-lg'>

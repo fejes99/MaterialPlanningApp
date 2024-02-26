@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Materials } from '@wasp/crud/Materials';
+import createMaterial from '@wasp/actions/createMaterial.js';
 import { Button, Label, Modal, TextInput } from 'flowbite-react';
+import { HiOutlinePlus } from 'react-icons/hi';
 
 const MaterialAddModal: React.FC = () => {
-  const createMaterial = Materials.create.useAction();
-
   const [openModal, setOpenModal] = useState(false);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
@@ -35,7 +34,7 @@ const MaterialAddModal: React.FC = () => {
     <>
       <div className='flex justify-end mb-4'>
         <Button color='blue' onClick={() => setOpenModal(true)}>
-          Dodaj materijal
+          <HiOutlinePlus className='mr-2' /> Dodaj materijal
         </Button>
       </div>
 

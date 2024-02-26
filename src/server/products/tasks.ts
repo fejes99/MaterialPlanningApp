@@ -1,12 +1,12 @@
-import { GetAllQuery, CreateAction, UpdateAction } from '@wasp/crud/Products';
 import { Material, Product } from '@wasp/entities';
+import { GetAllQuery,  UpdateAction } from '@wasp/crud/Products';
 
 export const getProducts: GetAllQuery<void, Product[]> = async (args, context) => {
   const { Product } = context.entities;
 
   return Product.findMany({
     include: {
-      productMaterials: {
+      materials: {
         include: {
           material: true,
         },
@@ -15,47 +15,16 @@ export const getProducts: GetAllQuery<void, Product[]> = async (args, context) =
   });
 };
 
-type CreateProductInput = {
-  code: string;
-  name: string;
-  description: string;
-  materials: Material[];
-};
-
-export const createProduct: CreateAction<CreateProductInput, Product> = async (args, context) => {
-  const { code, name, descprition, materials } = args;
-  const { Product } = context.entities;
-
-  return await Product.create({
-    data: {
-      code,
-      name,
-      descprition,
-      productMaterials: {
-        create: materials.map((material: Material) => ({
-          materialCount: 100,
-          materialUnit: 'g',
-          material: {
-            connect: {
-              id: material.id,
-            },
-          },
-        })),
-      },
-    },
-  });
-};
-
-type UpdateProductInput = { id: number; descprition: string };
+type UpdateProductInput = { id: number; description: string };
 
 export const updateProduct: UpdateAction<UpdateProductInput, Product> = (args, context) => {
-  const { id, descprition } = args;
   const { Product } = context.entities;
+  const { id, description } = args;
 
   return Product.update({
     where: { id },
     data: {
-      descprition,
+      description,
     },
   });
 };

@@ -1,4 +1,4 @@
-import { GetAllQuery, CreateAction, UpdateAction } from '@wasp/crud/Materials';
+import { GetAllQuery, UpdateAction } from '@wasp/crud/Materials';
 import { Material } from '@wasp/entities';
 
 export const getMaterials: GetAllQuery<void, Material[]> = async (args, context) => {
@@ -6,7 +6,7 @@ export const getMaterials: GetAllQuery<void, Material[]> = async (args, context)
 
   return Material.findMany({
     include: {
-      productMaterials: {
+      products: {
         include: {
           product: true,
         },
@@ -15,28 +15,28 @@ export const getMaterials: GetAllQuery<void, Material[]> = async (args, context)
   });
 };
 
-type CreateMaterialInput = {
-  code: string;
-  name: string;
-  measurementUnit: string;
-};
+// type CreateMaterialInput = {
+//   code: string;
+//   name: string;
+//   measurementUnit: string;
+// };
 
-export const createMaterial: CreateAction<CreateMaterialInput, Material> = async (
-  args,
-  context
-) => {
-  const { code, name, measurementUnit } = args;
-  const { Material } = context.entities;
+// export const createMaterial: CreateAction<CreateMaterialInput, Material> = async (
+//   args,
+//   context
+// ) => {
+//   const { code, name, measurementUnit } = args;
+//   const { Material } = context.entities;
 
-  return await Material.create({
-    data: {
-      code,
-      name,
-      count: 0,
-      measurementUnit,
-    },
-  });
-};
+//   return await Material.create({
+//     data: {
+//       code,
+//       name,
+//       count: 0,
+//       measurementUnit,
+//     },
+//   });
+// };
 
 type UpdateMaterialInput = {
   id: number;

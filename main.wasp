@@ -12,6 +12,14 @@ app TestApp {
   ],
   client: {
     rootComponent: import Root from "@client/RootPage.tsx"
+  },
+  db: {
+
+    system: PostgreSQL,
+    seeds: [
+      import { materialSeed } from "@server/seeds.js",
+      import { productSeed } from "@server/seeds.js"
+    ]
   }
 }
 
@@ -40,32 +48,32 @@ page ProductionPlanPage {
 // ----------------- Entities ------------------ //
 
 entity Material {=psl
-  id               Int                @id @default(autoincrement())
-  code             String             @unique
-  name             String
-  count            Int
-  measurementUnit  String
-  productMaterials ProductMaterials[]
+  id              Int                @id @default(autoincrement())
+  code            String             @unique
+  name            String
+  count           Int
+  measurementUnit String
+  products       ProductMaterials[]
 psl=}
 
 entity ProductMaterials {=psl
-  product                 Product  @relation(fields: [productId], references: [id])
-  productId               Int
-  material                Material @relation(fields: [materialId], references: [id])
-  materialId              Int
-  materialCount           Int
-  measurementUnit         String
+  product         Product  @relation(fields: [productId], references: [id])
+  productId       Int
+  material        Material @relation(fields: [materialId], references: [id])
+  materialId      Int
+  materialCount   Int
+  measurementUnit String
   
   @@id([productId, materialId])
 psl=}
 
 entity Product {=psl
-  id                     Int                      @id @default(autoincrement())
-  code                   String                   @unique
-  name                   String
-  description            String
-  productMaterials       ProductMaterials[]       
-  productionPlanProducts ProductionPlanProducts[]
+  id              Int                      @id @default(autoincrement())
+  code            String                   @unique
+  name            String
+  description     String
+  materials       ProductMaterials[]       
+  productionPlans ProductionPlanProducts[]
 psl=}
 
 entity ProductionPlanProducts {=psl
@@ -79,12 +87,12 @@ entity ProductionPlanProducts {=psl
 psl=}
 
 entity ProductionPlan {=psl
-  id                      Int                      @id @default(autoincrement())
-  code                    String                   @unique
-  createdAt               DateTime                 @default(now())
-  createdFor              DateTime
-  status                  String
-  productionPlanMaterials ProductionPlanProducts[]
+  id         Int                    @id @default(autoincrement())
+  code       String                 @unique
+  createdAt  DateTime               @default(now())
+  createdFor DateTime
+  status     String
+  products ProductionPlanProducts[]
 psl=}
 
 // ----------------- User operations ------------------ //
@@ -96,14 +104,16 @@ crud Materials {
       overrideFn: import { getMaterials } from "@server/materials/tasks.js"
     },
     get: {},
-    create: {
-      overrideFn: import { createMaterial } from "@server/materials/tasks.js"
-    },
     update: {
       overrideFn: import { updateMaterial } from "@server/materials/tasks.js"
     },
     delete: {}
   }
+}
+
+action createMaterial {
+  fn: import { createMaterial } from "@server/materials/actions.js",
+  entities: [Material]
 }
 
 crud Products {
@@ -113,11 +123,31 @@ crud Products {
       overrideFn: import { getProducts } from "@server/products/tasks.js"
     },
     get: {},
-    create: {
-      overrideFn: import { createProduct } from "@server/products/tasks.js"
-    },
     update: {
       overrideFn: import { updateProduct } from "@server/products/tasks.js"
-    }
+    },
+    delete: {}
   }
+}
+
+action createProduct {
+  fn: import { createProduct } from "@server/products/actions.js",
+  entities: [Product, ProductMaterials, Material]
+}
+
+crud ProductionPlans {
+  entity: ProductionPlan,
+  operations: {
+    getAll: {
+      overrideFn: import {getProductionPlans} from "@server/productionPlans/tasks.js"
+    },
+    get: {},
+    update: {},
+    delete: {}
+  }
+}
+
+action createProductionPlan {
+  fn: import { createProductionPlan} from "@server/productionPlans/actions.js",
+  entities: [ProductionPlan, ProductionPlanProducts, Product]
 }
