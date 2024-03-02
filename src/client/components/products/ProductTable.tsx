@@ -8,6 +8,7 @@ import DeleteModal from '../ui/modals/DeleteModal';
 type Props = {
   products: Product[];
 };
+
 const ProductTable: React.FC<Props> = ({ products }) => {
   const deleteProduct = Products.delete.useAction();
 

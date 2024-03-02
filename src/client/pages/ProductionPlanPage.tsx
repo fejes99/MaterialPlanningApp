@@ -4,7 +4,6 @@ import ProductionPlanAddModal from '../components/productionPlans/modals/Product
 
 const ProductionPlanPage: React.FC = () => {
   const { data: productionPlans, isLoading, error } = ProductionPlans.getAll.useQuery();
-  console.log('🚀 ~ productionPlans:', productionPlans);
 
   if (isLoading) return 'Loading...';
   if (error) return 'Error: ' + error;

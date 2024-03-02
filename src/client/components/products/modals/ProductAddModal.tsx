@@ -37,12 +37,11 @@ const ProductAddModal: React.FC = () => {
     resetFields();
   };
 
-  const handleAddMaterial = () => {
+  const handleAddMaterial = () =>
     setMaterialsInput([
       ...materialsInput,
       { materialId: 0, materialCount: 0, measurementUnit: '' },
     ]);
-  };
 
   const handleRemoveMaterial = (index: number) => {
     const updatedMaterials = [...materialsInput];

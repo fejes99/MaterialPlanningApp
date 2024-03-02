@@ -1,8 +1,9 @@
-import { ProductionPlan } from '@wasp/entities';
+import { ProductionPlan, ProductionPlanProducts } from '@wasp/entities';
 import { ProductionPlans } from '@wasp/crud/ProductionPlans';
 import { Checkbox, Table } from 'flowbite-react';
 import DeleteModal from '../ui/modals/DeleteModal';
 import { convertFullDate, convertShortDate } from '../../../shared/utils';
+import Dropdown from '../ui/Dropdown/Dropdown';
 
 type Props = {
   productionPlans: ProductionPlan[];
@@ -24,12 +25,22 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
           <Table.HeadCell>Planirani mesec</Table.HeadCell>
           <Table.HeadCell>Napravljeno dana</Table.HeadCell>
           <Table.HeadCell>Status</Table.HeadCell>
+          <Table.HeadCell>Proizvodi</Table.HeadCell>
           <Table.HeadCell>Akcije</Table.HeadCell>
         </Table.Head>
 
         <Table.Body className='divide-y'>
           {productionPlans &&
             productionPlans.map((productionPlan: ProductionPlan) => {
+              const products: string[] = productionPlan.products.map(
+                (productionPlanProduct: ProductionPlanProducts) => (
+                  <>
+                    {productionPlanProduct.product.name}
+                    <b>({productionPlanProduct.productCount} kom)</b>
+                  </>
+                )
+              );
+
               return (
                 <Table.Row
                   key={productionPlan.id}
@@ -49,6 +60,9 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {productionPlan.status}
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    <Dropdown label='Proizvodi' values={products} />
                   </Table.Cell>
                   <Table.Cell className='flex'>
                     <DeleteModal
