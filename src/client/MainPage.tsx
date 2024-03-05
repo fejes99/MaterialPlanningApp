@@ -1,7 +1,12 @@
 import './Main.css';
+import { User } from '@wasp/entities';
 
-const Main: React.FC = () => {
-  return <div>ZNACI OVO RADI</div>;
+interface Props {
+  user: User;
+}
+
+const Main: React.FC<Props> = ({ user }) => {
+  return <h1>Pocetna stranica</h1>;
 };
 
 export default Main;
