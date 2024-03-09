@@ -56,11 +56,11 @@ const ProductionPlanAddModal = () => {
 
   const handleMonthChange = (event) => setSelectedMonth(event.target.value);
 
-  function formatMonth(date: Date) {
+  const formatMonth = (date: Date) => {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     return `${year}-${month}`;
-  }
+  };
 
   const handleAddProduct = () =>
     setProductsInput([...productsInput, { productId: 0, productCount: 0 }]);

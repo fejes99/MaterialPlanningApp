@@ -1,4 +1,3 @@
-import { ProductionPlan } from '@wasp/entities';
 import { CreateProductionPlan } from '@wasp/actions/types';
 import HttpError from '@wasp/core/HttpError.js';
 import { ProductionPlanStatus } from '../../shared/productionPlan/types';

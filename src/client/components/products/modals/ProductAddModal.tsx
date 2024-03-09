@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Materials } from '@wasp/crud/Materials';
-import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import createProduct from '@wasp/actions/createProduct.js';
+import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import { HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 
 const ProductAddModal: React.FC = () => {

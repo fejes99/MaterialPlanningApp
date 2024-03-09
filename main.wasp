@@ -69,15 +69,22 @@ page ProductionPlanPage {
   component: import ProductionPlan from "@client/pages/ProductionPlanPage.tsx"
 }
 
+route ReservationRoute {path: "/reservations", to: ReservationPage }
+page ReservationPage {
+  authRequired: true,
+  component: import ReservationPlan from "@client/pages/ReservationPage.tsx"
+}
+
 // ----------------- Entities ------------------ //
 
 entity User {=psl
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  password String
-  name     String?
-  surrname String?
-  role     String?
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  name         String?
+  surrname     String?
+  role         String?
+  reservations Reservation[]?
 psl=}
 
 entity Material {=psl
@@ -120,12 +127,24 @@ entity ProductionPlanProducts {=psl
 psl=}
 
 entity ProductionPlan {=psl
-  id         Int                    @id @default(autoincrement())
-  code       String                 @unique
-  createdAt  DateTime               @default(now())
-  createdFor DateTime
-  status     String
-  products ProductionPlanProducts[]
+  id           Int                    @id @default(autoincrement())
+  code         String                 @unique
+  createdAt    DateTime               @default(now())
+  createdFor   DateTime
+  status       String
+  products     ProductionPlanProducts[]
+  reservations Reservation[]
+psl=}
+
+entity Reservation {=psl
+  id               Int            @id @default(autoincrement())
+  createdAt        DateTime       @default(now())
+  createdFor       DateTime
+  status           String
+  user             User?           @relation(fields: [userId], references: [id])
+  userId           Int?
+  productionPlan   ProductionPlan @relation(fields: [productionPlanId], references: [id])
+  productionPlanId Int
 psl=}
 
 // ----------------- User operations ------------------ //
@@ -172,7 +191,7 @@ crud ProductionPlans {
   entity: ProductionPlan,
   operations: {
     getAll: {
-      overrideFn: import {getProductionPlans} from "@server/productionPlans/tasks.js"
+      overrideFn: import { getProductionPlans } from "@server/productionPlans/tasks.js"
     },
     get: {},
     update: {},
@@ -180,7 +199,29 @@ crud ProductionPlans {
   }
 }
 
+query getActiveProductionPlans {
+  fn: import { getActiveProductionPlans } from "@server/productionPlans/queries.js",
+  entities: [ProductionPlan]
+}
+
 action createProductionPlan {
   fn: import { createProductionPlan} from "@server/productionPlans/actions.js",
   entities: [ProductionPlan, ProductionPlanProducts, Product]
+}
+
+crud Reservations {
+  entity: Reservation,
+  operations: {
+    getAll: {
+      overrideFn: import { getReservations } from "@server/reservations/tasks.js"
+    },
+    get: {},
+    update: {},
+    delete: {}
+  }
+}
+
+action createReservation {
+  fn: import { createReservation } from "@server/reservations/actions.js",
+  entities: [User, Reservation, ProductionPlan]
 }

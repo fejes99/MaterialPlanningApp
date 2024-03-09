@@ -5,9 +5,9 @@ import Dropdown from '../ui/Dropdown/Dropdown';
 import ProductUpdateModal from './modals/ProductUpdateModal';
 import DeleteModal from '../ui/modals/DeleteModal';
 
-type Props = {
+interface Props {
   products: Product[];
-};
+}
 
 const ProductTable: React.FC<Props> = ({ products }) => {
   const deleteProduct = Products.delete.useAction();
