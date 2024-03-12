@@ -4,7 +4,7 @@ import { HiOutlineTrash } from 'react-icons/hi';
 
 type Props = {
   label: string;
-  code: string;
+  code?: string;
   onDelete: () => Promise<any>;
 };
 
@@ -39,7 +39,7 @@ const DeleteModal: React.FC<Props> = ({ label, code, onDelete }) => {
       </div>
       <Modal show={openModal} onClose={() => setOpenModal(false)} popup>
         <Modal.Header>
-          Obriši {label} ({code})
+          Obriši {label} {code && ` (${code})`}
         </Modal.Header>
         <Modal.Body>
           <div className='text-center'>

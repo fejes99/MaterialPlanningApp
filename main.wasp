@@ -130,7 +130,7 @@ entity Reservation {=psl
   createdAt        DateTime       @default(now())
   createdFor       DateTime
   status           String
-  user             User?           @relation(fields: [userId], references: [id])
+  user             User?          @relation(fields: [userId], references: [id])
   userId           Int?
   productionPlan   ProductionPlan @relation(fields: [productionPlanId], references: [id])
   productionPlanId Int

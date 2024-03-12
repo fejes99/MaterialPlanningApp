@@ -2,7 +2,6 @@ import { type CreateReservation } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
 
 type CreateReservationInput = {
-  createdAt: Date;
   createdFor: Date;
   status: string;
   productionPlanId: number;
@@ -17,7 +16,7 @@ export const createReservation: CreateReservation<CreateReservationInput, void> 
   }
 
   const { Reservation } = context.entities;
-  const { createdAt, createdFor, status, productionPlanId } = args;
+  const { createdFor, status, productionPlanId } = args;
 
   try {
     await Reservation.create({
@@ -27,7 +26,6 @@ export const createReservation: CreateReservation<CreateReservationInput, void> 
             id: context.user.id,
           },
         },
-        createdAt,
         createdFor,
         status,
         productionPlan: {
@@ -37,7 +35,7 @@ export const createReservation: CreateReservation<CreateReservationInput, void> 
         },
       },
     });
-  } catch (e) {
+  } catch (e: any) {
     throw new Error(e.message);
   }
 };

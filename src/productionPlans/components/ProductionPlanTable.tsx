@@ -31,16 +31,15 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
 
         <Table.Body className='divide-y'>
           {productionPlans &&
-            productionPlans.map((productionPlan: ProductionPlan) => {
-              const products: string[] = [];
-              // productionPlan.products.map(
-              //   (productionPlanProduct: ProductionPlanProducts) => (
-              //     <>
-              //       {productionPlanProduct.product.name}
-              //       <b>({productionPlanProduct.productCount} kom)</b>
-              //     </>
-              //   )
-              // );
+            productionPlans.map((productionPlan: any) => {
+              const products: string[] = productionPlan.products.map(
+                (productionPlanProduct: any) => (
+                  <>
+                    {productionPlanProduct.product.name}
+                    <b>({productionPlanProduct.productCount} kom)</b>
+                  </>
+                )
+              );
 
               return (
                 <Table.Row

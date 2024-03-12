@@ -15,29 +15,6 @@ export const getMaterials: Materials.GetAllQuery<void, Material[]> = async (args
   });
 };
 
-// type CreateMaterialInput = {
-//   code: string;
-//   name: string;
-//   measurementUnit: string;
-// };
-
-// export const createMaterial: CreateAction<CreateMaterialInput, Material> = async (
-//   args,
-//   context
-// ) => {
-//   const { code, name, measurementUnit } = args;
-//   const { Material } = context.entities;
-
-//   return await Material.create({
-//     data: {
-//       code,
-//       name,
-//       count: 0,
-//       measurementUnit,
-//     },
-//   });
-// };
-
 type UpdateMaterialInput = {
   id: number;
   count: number;

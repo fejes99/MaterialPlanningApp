@@ -103,7 +103,7 @@ const ProductionPlanAddModal = () => {
 
             <div className='flex items-center mb-2'>
               <div className='mr-4'>
-                <Label htmlFor='code' value='Planirani mesec počev od' />
+                <Label htmlFor='code' value='Planirani mesec' />
               </div>
               <div className='relative'>
                 <input
@@ -126,11 +126,11 @@ const ProductionPlanAddModal = () => {
                     <div key={index} className='flex items-center space-x-4 mb-2 rounded-lg'>
                       <div className='flex-auto w-64'>
                         <Select
+                          required
                           value={product.productId}
                           onChange={(event) =>
                             handleProductChange(index, 'productId', parseInt(event.target.value))
                           }
-                          required
                         >
                           <option value={0} disabled hidden>
                             Proizvod
