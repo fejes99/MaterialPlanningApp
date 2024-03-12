@@ -1,13 +1,13 @@
-/** @type {import('tailwindcss').Config} */
+const { resolveProjectPath } = require('wasp/dev');
 
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}', 'node_modules/flowbite-react/lib/esm/**/*.js'],
+  content: [
+    resolveProjectPath('./src/**/*.{js,jsx,ts,tsx}'),
+    resolveProjectPath('./node_modules/flowbite-react/lib/esm/**/*.js'),
+  ],
   theme: {
     extend: {},
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('flowbite/plugin'),
-  ],
+  plugins: [require('flowbite/plugin')],
 };

@@ -1,34 +1,25 @@
 app TestApp {
   wasp: {
-    version: "^0.11.8"
+    version: "^0.12.0"
   },
   title: "Material Planning",
   auth: {
     userEntity: User,
     methods: {
-      usernameAndPassword: {}
+      usernameAndPassword: {
+        userSignupFields: import { userSignupFields } from "@src/auth/operations/signup.js",
+      }
     },
-    onAuthFailedRedirectTo: "/login",
-    signup: {
-      additionalFields: import { fields } from "@server/auth/signup.js",
-    }
+    onAuthFailedRedirectTo: "/login"
   },
-  dependencies: [
-    ("@tailwindcss/forms", "^0.5.7"),
-    ("@tailwindcss/typography", "^0.5.10"),
-    ("@headlessui/react", "1.7.18"),
-    ("@heroicons/react", "2.1.1"),
-    ("flowbite-react", "0.7.2"),
-  ],
   client: {
-    rootComponent: import Root from "@client/RootPage.tsx"
+    rootComponent: import Root from "@src/pages/RootPage.tsx"
   },
   db: {
-
     system: PostgreSQL,
     seeds: [
-      import { materialSeed } from "@server/seeds.js",
-      import { productSeed } from "@server/seeds.js"
+      import { materialSeed } from "@src/seeds.js",
+      import { productSeed } from "@src/seeds.js"
     ]
   }
 }
@@ -37,50 +28,48 @@ app TestApp {
 
 route SignupRoute { path: "/signup", to: SignupPage }
 page SignupPage {
-  component: import Signup from "@client/pages/auth/SignupPage.tsx"
+  component: import Signup from "@src/auth/pages/SignupPage.tsx"
 }
 
 route LoginRoute { path: "/login", to: LoginPage }
 page LoginPage {
-  component: import Login from "@client/pages/auth/LoginPage.tsx"
+  component: import Login from "@src/auth/pages/LoginPage.tsx"
 }
 
 route RootRoute { path: "/", to: MainPage }
 page MainPage {
   authRequired: true,
-  component: import Main from "@client/MainPage.tsx"
+  component: import Main from "@src/pages/MainPage.tsx"
 }
 
 route MaterialRoute {path: "/materials", to: MaterialPage }
 page MaterialPage {
   authRequired: true,
-  component: import Material from "@client/pages/MaterialPage.tsx"
+  component: import Material from "@src/materials/pages/MaterialPage.tsx"
 }
 
 route ProductRoute {path: "/products", to: ProductPage }
 page ProductPage {
   authRequired: true,
-  component: import Product from "@client/pages/ProductPage.tsx"
+  component: import Product from "@src/products/pages/ProductPage.tsx"
 }
 
 route ProductionPlanRoute {path: "/production-plans", to: ProductionPlanPage }
 page ProductionPlanPage {
   authRequired: true,
-  component: import ProductionPlan from "@client/pages/ProductionPlanPage.tsx"
+  component: import ProductionPlan from "@src/productionPlans/pages/ProductionPlanPage.tsx"
 }
 
 route ReservationRoute {path: "/reservations", to: ReservationPage }
 page ReservationPage {
   authRequired: true,
-  component: import ReservationPlan from "@client/pages/ReservationPage.tsx"
+  component: import ReservationPlan from "@src/reservations/pages/ReservationPage.tsx"
 }
 
 // ----------------- Entities ------------------ //
 
 entity User {=psl
   id           Int           @id @default(autoincrement())
-  username     String        @unique
-  password     String
   name         String?
   surrname     String?
   role         String?
@@ -93,7 +82,7 @@ entity Material {=psl
   name            String
   count           Int
   measurementUnit String
-  products       ProductMaterials[]
+  products        ProductMaterials[]
 psl=}
 
 entity ProductMaterials {=psl
@@ -153,18 +142,18 @@ crud Materials {
   entity: Material,
   operations: {
     getAll: {
-      overrideFn: import { getMaterials } from "@server/materials/tasks.js"
+      overrideFn: import { getMaterials } from "@src/materials/operations/tasks.js"
     },
     get: {},
     update: {
-      overrideFn: import { updateMaterial } from "@server/materials/tasks.js"
+      overrideFn: import { updateMaterial } from "@src/materials/operations/tasks.js"
     },
     delete: {}
   }
 }
 
 action createMaterial {
-  fn: import { createMaterial } from "@server/materials/actions.js",
+  fn: import { createMaterial } from "@src/materials/operations/actions.js",
   entities: [Material]
 }
 
@@ -172,18 +161,18 @@ crud Products {
   entity: Product,
   operations: {
     getAll: {
-      overrideFn: import { getProducts } from "@server/products/tasks.js"
+      overrideFn: import { getProducts } from "@src/products/operations/tasks.js"
     },
     get: {},
     update: {
-      overrideFn: import { updateProduct } from "@server/products/tasks.js"
+      overrideFn: import { updateProduct } from "@src/products/operations/tasks.js"
     },
     delete: {}
   }
 }
 
 action createProduct {
-  fn: import { createProduct } from "@server/products/actions.js",
+  fn: import { createProduct } from "@src/products/operations/actions.js",
   entities: [Product, ProductMaterials, Material]
 }
 
@@ -191,7 +180,7 @@ crud ProductionPlans {
   entity: ProductionPlan,
   operations: {
     getAll: {
-      overrideFn: import { getProductionPlans } from "@server/productionPlans/tasks.js"
+      overrideFn: import { getProductionPlans } from "@src/productionPlans/operations/tasks.js"
     },
     get: {},
     update: {},
@@ -200,12 +189,12 @@ crud ProductionPlans {
 }
 
 query getActiveProductionPlans {
-  fn: import { getActiveProductionPlans } from "@server/productionPlans/queries.js",
+  fn: import { getActiveProductionPlans } from "@src/productionPlans/operations/queries.js",
   entities: [ProductionPlan]
 }
 
 action createProductionPlan {
-  fn: import { createProductionPlan} from "@server/productionPlans/actions.js",
+  fn: import { createProductionPlan} from "@src/productionPlans/operations/actions.js",
   entities: [ProductionPlan, ProductionPlanProducts, Product]
 }
 
@@ -213,7 +202,7 @@ crud Reservations {
   entity: Reservation,
   operations: {
     getAll: {
-      overrideFn: import { getReservations } from "@server/reservations/tasks.js"
+      overrideFn: import { getReservations } from "@src/reservations/operations/tasks.js"
     },
     get: {},
     update: {},
@@ -222,6 +211,6 @@ crud Reservations {
 }
 
 action createReservation {
-  fn: import { createReservation } from "@server/reservations/actions.js",
+  fn: import { createReservation } from "@src/reservations/operations/actions.js",
   entities: [User, Reservation, ProductionPlan]
 }
