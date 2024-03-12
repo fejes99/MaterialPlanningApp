@@ -7,8 +7,6 @@ interface Props {
   reservations: Reservation[];
 }
 const ReservationTable: React.FC<Props> = ({ reservations }) => {
-  console.log(reservations);
-
   return (
     <div className='overflow-x-auto'>
       <Table hoverable>

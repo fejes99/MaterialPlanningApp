@@ -3,6 +3,8 @@ import { HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import { Materials } from 'wasp/client/crud';
 import { createProduct } from 'wasp/client/operations';
+import { MaterialUnit } from '../../../materials/types/MaterialUnit';
+import { convertUnit } from '../../../materials/helpers/convertUnit';
 
 const ProductAddModal: React.FC = () => {
   const { data: materials } = Materials.getAll.useQuery();
@@ -12,7 +14,7 @@ const ProductAddModal: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [materialsInput, setMaterialsInput] = useState([
-    { materialId: 0, materialCount: 0, measurementUnit: '' },
+    { materialId: 0, materialCount: 0, measurementUnit: MaterialUnit.Milligrams },
   ]);
 
   const onCloseModal = () => {
@@ -24,7 +26,9 @@ const ProductAddModal: React.FC = () => {
     setCode('');
     setName('');
     setDescription('');
-    setMaterialsInput([{ materialId: 0, materialCount: 0, measurementUnit: '' }]);
+    setMaterialsInput([
+      { materialId: 0, materialCount: 0, measurementUnit: MaterialUnit.Milligrams },
+    ]);
   };
 
   const handleCreateProduct = () => {
@@ -40,7 +44,7 @@ const ProductAddModal: React.FC = () => {
   const handleAddMaterial = () =>
     setMaterialsInput([
       ...materialsInput,
-      { materialId: 0, materialCount: 0, measurementUnit: '' },
+      { materialId: 0, materialCount: 0, measurementUnit: MaterialUnit.Milligrams },
     ]);
 
   const handleRemoveMaterial = (index: number) => {
@@ -53,6 +57,16 @@ const ProductAddModal: React.FC = () => {
     const updatedMaterials = [...materialsInput];
     updatedMaterials[index][key] = value;
     setMaterialsInput(updatedMaterials);
+  };
+
+  const handleMeasurementUnitChange = (index: number, value: string) => {
+    const materialToUpdate = materialsInput[index];
+    const oldCount = materialToUpdate['materialCount'];
+    const oldUnit = materialToUpdate['measurementUnit'];
+    const updatedCount = convertUnit(oldCount, oldUnit, value);
+
+    handleMaterialChange(index, 'measurementUnit', value);
+    handleMaterialChange(index, 'materialCount', updatedCount);
   };
 
   return (
@@ -146,15 +160,21 @@ const ProductAddModal: React.FC = () => {
                           required
                         />
                       </div>
-                      <div className='flex-none w-16'>
-                        <TextInput
-                          placeholder='mg'
+                      <div className='flex-none w-20'>
+                        <Select
+                          required
                           value={material.measurementUnit}
                           onChange={(event) =>
-                            handleMaterialChange(index, 'measurementUnit', event.target.value)
+                            handleMeasurementUnitChange(index, event.target.value)
                           }
-                          required
-                        />
+                        >
+                          <option value={0} disabled hidden />
+                          {Object.values(MaterialUnit).map((unit) => (
+                            <option key={unit} value={unit}>
+                              {unit}
+                            </option>
+                          ))}
+                        </Select>
                       </div>
                       <Button
                         pill

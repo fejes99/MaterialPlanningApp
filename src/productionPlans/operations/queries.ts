@@ -13,7 +13,11 @@ export const getActiveProductionPlans: GetActiveProductionPlans<void, Production
     include: {
       products: {
         include: {
-          product: true,
+          product: {
+            include: {
+              materials: true,
+            },
+          },
         },
       },
     },

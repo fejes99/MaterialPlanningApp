@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Material" ALTER COLUMN "count" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "ProductMaterials" ALTER COLUMN "materialCount" SET DATA TYPE DOUBLE PRECISION;

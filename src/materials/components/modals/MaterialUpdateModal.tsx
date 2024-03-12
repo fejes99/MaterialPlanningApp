@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Button, Label, Modal, TextInput } from 'flowbite-react';
+import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import { type Material } from 'wasp/entities';
 import { Materials } from 'wasp/client/crud';
+import { MaterialUnit } from '../../types/MaterialUnit';
+import { convertUnit } from '../../helpers/convertUnit';
 
 type Props = {
   material: Material;
@@ -15,6 +17,13 @@ const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
   const [measurementUnit, setMeasurementUnit] = useState(material.measurementUnit);
 
   const onCloseModal = () => setOpenModal(false);
+
+  const handleMeasurementUnitChange = (event) => {
+    const { value } = event.target;
+    const updatedCount = convertUnit(count, measurementUnit, value);
+    setCount(updatedCount);
+    setMeasurementUnit(value);
+  };
 
   const handleUpdateMaterial = () => {
     updateMaterial({
@@ -72,13 +81,14 @@ const MaterialUpdateModal: React.FC<Props> = ({ material }) => {
               <div className='mb-2 block'>
                 <Label htmlFor='measurementUnit' value='Merna jedinica materijala' />
               </div>
-              <TextInput
-                id='measurementUnit'
-                placeholder='g'
-                value={measurementUnit}
-                onChange={(event) => setMeasurementUnit(event.target.value)}
-                required
-              />
+              <Select required value={measurementUnit} onChange={handleMeasurementUnitChange}>
+                <option value={0} disabled hidden />
+                {Object.values(MaterialUnit).map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </Select>
             </div>
           </div>
         </Modal.Body>

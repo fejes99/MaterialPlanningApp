@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Button, Label, Modal, TextInput } from 'flowbite-react';
+import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import { HiOutlinePlus } from 'react-icons/hi';
 import { createMaterial } from 'wasp/client/operations';
+import { MaterialUnit } from '../../types/MaterialUnit';
 
 const MaterialAddModal: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -71,13 +72,18 @@ const MaterialAddModal: React.FC = () => {
               <div className='mb-2 block'>
                 <Label htmlFor='measurementUnit' value='Merna jedinica materijala' />
               </div>
-              <TextInput
-                id='measurementUnit'
-                placeholder='g'
+              <Select
+                required
                 value={measurementUnit}
                 onChange={(event) => setMeasurementUnit(event.target.value)}
-                required
-              />
+              >
+                <option value={0} disabled hidden />
+                {Object.values(MaterialUnit).map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </Select>
             </div>
           </div>
         </Modal.Body>

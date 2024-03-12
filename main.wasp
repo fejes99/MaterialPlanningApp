@@ -80,7 +80,7 @@ entity Material {=psl
   id              Int                @id @default(autoincrement())
   code            String             @unique
   name            String
-  count           Int
+  count           Float
   measurementUnit String
   products        ProductMaterials[]
 psl=}
@@ -90,7 +90,7 @@ entity ProductMaterials {=psl
   productId       Int
   material        Material @relation(fields: [materialId], references: [id])
   materialId      Int
-  materialCount   Int
+  materialCount   Float
   measurementUnit String
   
   @@id([productId, materialId])
