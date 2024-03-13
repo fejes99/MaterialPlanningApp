@@ -1,4 +1,4 @@
-import { type CreateMaterial, type ReduceMaterialCount } from 'wasp/server/operations';
+import { type CreateMaterial, type UpdateMaterialCount } from 'wasp/server/operations';
 import { type Material } from 'wasp/entities';
 import { convertUnit } from '../helpers/convertUnit';
 import { MaterialInput } from '../types/MaterialInput';
@@ -24,12 +24,20 @@ export const createMaterial: CreateMaterial<CreateMaterialInput, void> = async (
   });
 };
 
-export const reduceMaterialCount: ReduceMaterialCount<MaterialInput, void> = async (
+type UpdateMaterialCountInput = {
+  material: MaterialInput;
+  operation: 'reduce' | 'increase';
+};
+
+export const updateMaterialCount: UpdateMaterialCount<UpdateMaterialCountInput, void> = async (
   args,
   context
 ) => {
   const { Material } = context.entities;
-  const { materialId, materialCount, measurementUnit } = args;
+  const {
+    material: { materialId, materialCount, measurementUnit },
+    operation,
+  } = args;
 
   const currentMaterial: Material = await Material.findUniqueOrThrow({
     where: {
@@ -43,7 +51,12 @@ export const reduceMaterialCount: ReduceMaterialCount<MaterialInput, void> = asy
     currentMaterial.measurementUnit
   );
 
-  const updatedCount = currentMaterial.count - convertedCount;
+  let updatedCount: number;
+  if (operation === 'reduce') {
+    updatedCount = currentMaterial.count - convertedCount;
+  } else {
+    updatedCount = currentMaterial.count + convertedCount;
+  }
 
   await Material.update({
     where: {

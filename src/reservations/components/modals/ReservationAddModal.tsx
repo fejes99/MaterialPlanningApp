@@ -6,7 +6,7 @@ import {
   useQuery,
   getActiveProductionPlans,
   createReservation,
-  reduceMaterialCount,
+  updateMaterialCount,
 } from 'wasp/client/operations';
 import { convertShortDate } from '../../../common/helpers/formatDate';
 import { MaterialUnit } from '../../../materials/types/MaterialUnit';
@@ -83,7 +83,14 @@ const ReservationAddModal: React.FC = () => {
 
   const calculateMaxCount = (mergedMaterial: any, materialInStorage: any) => {
     const defaultCount = 0;
-    const materialCountInStorage = materialInStorage?.count || defaultCount;
+    let materialCountInStorage = materialInStorage?.count || defaultCount;
+
+    materialCountInStorage = convertUnit(
+      materialCountInStorage,
+      materialInStorage.measurementUnit,
+      mergedMaterial.measurementUnit
+    );
+
     return Math.min(materialCountInStorage, mergedMaterial.materialCount);
   };
 
@@ -104,7 +111,7 @@ const ReservationAddModal: React.FC = () => {
     try {
       await Promise.all(
         materialsInput.map(async (material) => {
-          await reduceMaterialCount(material);
+          await updateMaterialCount({ material, operation: 'reduce' });
         })
       );
 

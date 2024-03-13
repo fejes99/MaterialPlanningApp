@@ -7,7 +7,9 @@ import {
   type ProductionPlan,
 } from 'wasp/entities';
 import { convertFullDate, convertShortDate } from '../../common/helpers/formatDate';
+import { Reservations } from 'wasp/client/crud';
 import DeleteModal from '../../common/components/ui/modals/DeleteModal';
+import Dropdown from '../../common/components/ui/Dropdown/Dropdown';
 
 interface Props {
   reservations: (Reservation & {
@@ -17,8 +19,12 @@ interface Props {
   })[];
 }
 const ReservationTable: React.FC<Props> = ({ reservations }) => {
+  const deleteReservation = Reservations.delete.useAction();
+
+  const handleDelete = (id: number) => deleteReservation({ id });
+
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto "h-[80vh]"'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell className='p-4'>
@@ -35,6 +41,11 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
         <Table.Body className='divide-y'>
           {reservations &&
             reservations.map((reservation) => {
+              const materials: string[] = reservation.materials.map(
+                (reservationMaterial) =>
+                  `${reservationMaterial.material.name} (${reservationMaterial.materialCount} ${reservationMaterial.measurementUnit})`
+              );
+
               return (
                 <Table.Row
                   key={reservation.id}
@@ -58,10 +69,14 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {reservation.productionPlan.code}
                   </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    <Dropdown label='Materijali' values={materials} />
+                  </Table.Cell>
+
                   <Table.Cell className='flex justify-around'>
                     <DeleteModal
                       label={'rezervaciju: ' + convertShortDate(reservation.createdFor)}
-                      onDelete={() => Promise.resolve()}
+                      onDelete={() => handleDelete(reservation.id)}
                     />
                   </Table.Cell>
                 </Table.Row>

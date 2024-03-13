@@ -139,7 +139,7 @@ entity Reservation {=psl
 psl=}
 
 entity ReservationMaterials {=psl
-  reservation     Reservation @relation(fields: [reservationId], references: [id])
+  reservation     Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
   reservationId   Int
   material        Material    @relation(fields: [materialId], references: [id])
   materialId      Int
@@ -170,8 +170,8 @@ action createMaterial {
   entities: [Material]
 }
 
-action reduceMaterialCount {
-  fn: import { reduceMaterialCount } from "@src/materials/operations/actions.js",
+action updateMaterialCount {
+  fn: import { updateMaterialCount } from "@src/materials/operations/actions.js",
   entities: [Material]
 }
 
