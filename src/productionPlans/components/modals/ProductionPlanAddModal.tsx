@@ -30,34 +30,31 @@ const ProductionPlanAddModal = () => {
 
   const handleCreateProductionPlan = () => {
     const code = `PP${selectedMonth.substring(5, 7)}${selectedMonth.substring(2, 4)}`;
-    try {
-      const createdAt = new Date();
-      const currentYear = createdAt.getFullYear();
-      const currentMonth = createdAt.getMonth();
-      const currentDate = createdAt.getDate();
-      const currentHours = createdAt.getHours();
-      const currentMinutes = createdAt.getMinutes();
-      const currentSeconds = createdAt.getSeconds();
-      const createdAtLocalTimezone = new Date(
-        currentYear,
-        currentMonth,
-        currentDate,
-        currentHours,
-        currentMinutes,
-        currentSeconds
-      );
 
-      createProductionPlan({
-        code,
-        createdAt: createdAtLocalTimezone,
-        createdFor: new Date(selectedMonth),
-        status: ProductionPlanStatus.Active,
-        products: productsInput,
-      });
-      resetFields();
-    } catch (error) {
-      console.log('🚀 ~ handleCreateProductionPlan ~ error:', error);
-    }
+    const createdAt = new Date();
+    const currentYear = createdAt.getFullYear();
+    const currentMonth = createdAt.getMonth();
+    const currentDate = createdAt.getDate();
+    const currentHours = createdAt.getHours();
+    const currentMinutes = createdAt.getMinutes();
+    const currentSeconds = createdAt.getSeconds();
+    const createdAtLocalTimezone = new Date(
+      currentYear,
+      currentMonth,
+      currentDate,
+      currentHours,
+      currentMinutes,
+      currentSeconds
+    );
+
+    createProductionPlan({
+      code,
+      createdAt: createdAtLocalTimezone,
+      createdFor: new Date(selectedMonth),
+      status: ProductionPlanStatus.Active,
+      products: productsInput,
+    });
+    resetFields();
   };
 
   const handleMonthChange = (event) => setSelectedMonth(event.target.value);

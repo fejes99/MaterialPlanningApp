@@ -1,12 +1,12 @@
 import { Checkbox, Table } from 'flowbite-react';
-import { type Product, type ProductMaterials } from 'wasp/entities';
+import { type Material, type Product, type ProductMaterials } from 'wasp/entities';
 import { Products } from 'wasp/client/crud';
 import Dropdown from '../../common/components/ui/Dropdown/Dropdown';
 import DeleteModal from '../../common/components/ui/modals/DeleteModal';
 import ProductUpdateModal from './modals/ProductUpdateModal';
 
 interface Props {
-  products: Product[];
+  products: (Product & { materials: (ProductMaterials & { material: Material })[] })[];
 }
 
 const ProductTable: React.FC<Props> = ({ products }) => {
@@ -30,15 +30,11 @@ const ProductTable: React.FC<Props> = ({ products }) => {
 
         <Table.Body className='divide-y'>
           {products &&
-            products.map((product: any) => {
-              const materials: string[] = product.materials.map((productMaterial: any) => (
-                <>
-                  {productMaterial.material.name}
-                  <b>
-                    ({productMaterial.materialCount} {productMaterial.measurementUnit})
-                  </b>
-                </>
-              ));
+            products.map((product) => {
+              const materials: string[] = product.materials.map(
+                (productMaterial) =>
+                  `${productMaterial.material.name} (${productMaterial.materialCount} ${productMaterial.measurementUnit})`
+              );
 
               return (
                 <Table.Row

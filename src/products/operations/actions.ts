@@ -1,10 +1,5 @@
 import { type CreateProduct } from 'wasp/server/operations';
-
-type MaterialInput = {
-  materialId: number;
-  materialCount: number;
-  measurementUnit: string;
-};
+import { MaterialInput } from '../../materials/types/MaterialInput';
 
 type CreateProductInput = {
   code: string;

@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
-import { useQuery, getActiveProductionPlans, createReservation } from 'wasp/client/operations';
-import { convertShortDate } from '../../../common/helpers/formatDate';
 import { Materials } from 'wasp/client/crud';
+import {
+  useQuery,
+  getActiveProductionPlans,
+  createReservation,
+  reduceMaterialCount,
+} from 'wasp/client/operations';
+import { convertShortDate } from '../../../common/helpers/formatDate';
 import { MaterialUnit } from '../../../materials/types/MaterialUnit';
+import { convertUnit } from '../../../materials/helpers/convertUnit';
 
 const ReservationAddModal: React.FC = () => {
   const { data: productionPlans } = useQuery(getActiveProductionPlans);
@@ -26,9 +32,10 @@ const ReservationAddModal: React.FC = () => {
     setMaterialsInput([]);
   };
 
-  const handleProductionPlanChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedPlanId = parseInt(event.target.value);
+  const handleProductionPlanChange = (value: any) => {
+    const selectedPlanId = parseInt(value);
     const selectedPlan = findSelectedPlan(selectedPlanId);
+    setSelectedProductionPlan(selectedPlan);
 
     if (selectedPlan) {
       const mergedMaterials = mergeMaterials(selectedPlan);
@@ -36,9 +43,8 @@ const ReservationAddModal: React.FC = () => {
     }
   };
 
-  const findSelectedPlan = (selectedPlanId: number) => {
-    return productionPlans?.find((plan: any) => plan.id === selectedPlanId);
-  };
+  const findSelectedPlan = (selectedPlanId: number) =>
+    productionPlans?.find((plan: any) => plan.id === selectedPlanId);
 
   const mergeMaterials = (selectedPlan: any) => {
     const mergedMaterials: {
@@ -66,7 +72,6 @@ const ReservationAddModal: React.FC = () => {
     const updatedMaterials = mergedMaterials.map((mergedMaterial: any) => {
       const materialInStorage = findMaterialInStorage(mergedMaterial.materialId);
       const maxCount = calculateMaxCount(mergedMaterial, materialInStorage);
-      reduceMaterialCountInStorage(mergedMaterial.materialId, maxCount);
       return { ...mergedMaterial, materialCount: maxCount };
     });
 
@@ -82,16 +87,33 @@ const ReservationAddModal: React.FC = () => {
     return Math.min(materialCountInStorage, mergedMaterial.materialCount);
   };
 
-  const reduceMaterialCountInStorage = (materialId: number, reservedCount: number) => {
-    // Implement the logic to reduce the material count in storage for the reserved materials
+  const handleMeasurementUnitChange = (index: number, value: string) => {
+    const materialToUpdate = materialsInput[index];
+    const oldCount = materialToUpdate['materialCount'];
+    const oldUnit = materialToUpdate['measurementUnit'];
+    const updatedCount = convertUnit(oldCount, oldUnit, value);
+
+    setMaterialsInput(
+      materialsInput.map((mat, idx) =>
+        idx === index ? { ...mat, materialCount: updatedCount, measurementUnit: value } : mat
+      )
+    );
   };
 
   const handleCreateReservation = async () => {
     try {
+      await Promise.all(
+        materialsInput.map(async (material) => {
+          await reduceMaterialCount(material);
+        })
+      );
+
       await createReservation({
         createdFor: selectedProductionPlan.createdFor,
         productionPlanId: selectedProductionPlan.id,
+        materials: materialsInput,
       });
+
       onCloseModal();
     } catch (error) {
       console.error('Error creating reservation:', error);
@@ -116,8 +138,8 @@ const ReservationAddModal: React.FC = () => {
               </div>
               <Select
                 required
-                value={selectedProductionPlan ? selectedProductionPlan.id : ''}
-                onChange={handleProductionPlanChange}
+                value={selectedProductionPlan?.id || ''}
+                onChange={(event) => handleProductionPlanChange(event.target.value)}
               >
                 <option value='' disabled hidden>
                   Izaberite proizvodni plan
@@ -195,15 +217,8 @@ const ReservationAddModal: React.FC = () => {
                       <Select
                         required
                         value={material.measurementUnit}
-                        onChange={(event) =>
-                          setMaterialsInput(
-                            materialsInput.map((mat, idx) =>
-                              idx === index ? { ...mat, measurementUnit: event.target.value } : mat
-                            )
-                          )
-                        }
+                        onChange={(event) => handleMeasurementUnitChange(index, event.target.value)}
                       >
-                        <option value={0} disabled hidden />
                         {Object.values(MaterialUnit).map((unit) => (
                           <option key={unit} value={unit}>
                             {unit}
@@ -230,7 +245,7 @@ const ReservationAddModal: React.FC = () => {
                   onClick={() =>
                     setMaterialsInput([
                       ...materialsInput,
-                      { materialId: 0, materialCount: 0, measurementUnit: '' },
+                      { materialId: 0, materialCount: 0, measurementUnit: MaterialUnit.Milligrams },
                     ])
                   }
                 >

@@ -1,9 +1,11 @@
 import { type CreateReservation } from 'wasp/server/operations';
 import { HttpError } from 'wasp/server';
+import { MaterialInput } from '../../materials/types/MaterialInput';
 
 type CreateReservationInput = {
   createdFor: Date;
   productionPlanId: number;
+  materials: MaterialInput[];
 };
 
 export const createReservation: CreateReservation<CreateReservationInput, void> = async (
@@ -15,7 +17,7 @@ export const createReservation: CreateReservation<CreateReservationInput, void> 
   }
 
   const { Reservation } = context.entities;
-  const { createdFor, productionPlanId } = args;
+  const { createdFor, productionPlanId, materials } = args;
 
   try {
     await Reservation.create({
@@ -31,6 +33,17 @@ export const createReservation: CreateReservation<CreateReservationInput, void> 
           connect: {
             id: productionPlanId,
           },
+        },
+        materials: {
+          create: materials.map(({ materialId, materialCount, measurementUnit }) => ({
+            material: {
+              connect: {
+                id: materialId,
+              },
+            },
+            materialCount,
+            measurementUnit,
+          })),
         },
       },
     });

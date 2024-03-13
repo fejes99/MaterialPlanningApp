@@ -1,12 +1,14 @@
 import { Checkbox, Table } from 'flowbite-react';
-import { type ProductionPlan, type ProductionPlanProducts } from 'wasp/entities';
+import { type ProductionPlan, type ProductionPlanProducts, type Product } from 'wasp/entities';
 import { ProductionPlans } from 'wasp/client/crud';
 import { convertFullDate, convertShortDate } from '../../common/helpers/formatDate';
 import DeleteModal from '../../common/components/ui/modals/DeleteModal';
 import Dropdown from '../../common/components/ui/Dropdown/Dropdown';
 
 type Props = {
-  productionPlans: ProductionPlan[];
+  productionPlans: (ProductionPlan & {
+    products: (ProductionPlanProducts & { product: Product })[];
+  })[];
 };
 
 const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
@@ -31,14 +33,10 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
 
         <Table.Body className='divide-y'>
           {productionPlans &&
-            productionPlans.map((productionPlan: any) => {
+            productionPlans.map((productionPlan) => {
               const products: string[] = productionPlan.products.map(
-                (productionPlanProduct: any) => (
-                  <>
-                    {productionPlanProduct.product.name}
-                    <b>({productionPlanProduct.productCount} kom)</b>
-                  </>
-                )
+                (productionPlanProduct) =>
+                  `${productionPlanProduct.product.name} (${productionPlanProduct.productCount} kom)`
               );
 
               return (

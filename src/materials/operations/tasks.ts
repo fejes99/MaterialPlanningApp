@@ -1,7 +1,10 @@
-import { type Material } from 'wasp/entities';
+import { type Material, type ProductMaterials, type Product } from 'wasp/entities';
 import { type Materials } from 'wasp/server/crud';
 
-export const getMaterials: Materials.GetAllQuery<void, Material[]> = async (args, context) => {
+export const getMaterials: Materials.GetAllQuery<
+  void,
+  (Material & { products: (ProductMaterials & { product: Product })[] })[]
+> = async (args, context) => {
   const { Material } = context.entities;
 
   return await Material.findMany({

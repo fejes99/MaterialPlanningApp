@@ -1,10 +1,20 @@
 import { Checkbox, Table } from 'flowbite-react';
-import { type Reservation } from 'wasp/entities';
+import {
+  type Reservation,
+  type ReservationMaterials,
+  type Material,
+  type User,
+  type ProductionPlan,
+} from 'wasp/entities';
 import { convertFullDate, convertShortDate } from '../../common/helpers/formatDate';
 import DeleteModal from '../../common/components/ui/modals/DeleteModal';
 
 interface Props {
-  reservations: Reservation[];
+  reservations: (Reservation & {
+    materials: (ReservationMaterials & { material: Material })[];
+    user: User | null;
+    productionPlan: ProductionPlan;
+  })[];
 }
 const ReservationTable: React.FC<Props> = ({ reservations }) => {
   return (
@@ -19,41 +29,44 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
           <Table.HeadCell>Status</Table.HeadCell>
           <Table.HeadCell>Napravio</Table.HeadCell>
           <Table.HeadCell>Plan proizvodnje</Table.HeadCell>
+          <Table.HeadCell>Materiali</Table.HeadCell>
           <Table.HeadCell>Akcije</Table.HeadCell>
         </Table.Head>
         <Table.Body className='divide-y'>
           {reservations &&
-            reservations.map((reservation: any) => (
-              <Table.Row
-                key={reservation.id}
-                className='bg-white dark:border-gray-700 dark:bg-gray-800'
-              >
-                <Table.Cell className='p-4'>
-                  <Checkbox />
-                </Table.Cell>
-                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                  {convertShortDate(reservation.createdFor)}
-                </Table.Cell>
-                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                  {convertFullDate(reservation.createdAt)}
-                </Table.Cell>
-                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                  {reservation.status}
-                </Table.Cell>
-                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                  {reservation.user.name + ' ' + reservation.user.surrname}
-                </Table.Cell>
-                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                  {reservation.productionPlan.code}
-                </Table.Cell>
-                <Table.Cell className='flex justify-around'>
-                  <DeleteModal
-                    label={'rezervaciju: ' + convertShortDate(reservation.createdFor)}
-                    onDelete={() => Promise.resolve()}
-                  />
-                </Table.Cell>
-              </Table.Row>
-            ))}
+            reservations.map((reservation) => {
+              return (
+                <Table.Row
+                  key={reservation.id}
+                  className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                >
+                  <Table.Cell className='p-4'>
+                    <Checkbox />
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {convertShortDate(reservation.createdFor)}
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {convertFullDate(reservation.createdAt)}
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {reservation.status}
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {reservation.user?.name + ' ' + reservation.user?.surrname}
+                  </Table.Cell>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {reservation.productionPlan.code}
+                  </Table.Cell>
+                  <Table.Cell className='flex justify-around'>
+                    <DeleteModal
+                      label={'rezervaciju: ' + convertShortDate(reservation.createdFor)}
+                      onDelete={() => Promise.resolve()}
+                    />
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
         </Table.Body>
       </Table>
     </div>

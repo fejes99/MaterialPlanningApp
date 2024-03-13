@@ -6,7 +6,6 @@ import { UserRole } from '../../../../user/types/UserRole';
 
 const MainNavbar: React.FC = () => {
   const { data: user } = useAuth();
-  console.log('🚀 ~ user:', user);
 
   return (
     <Navbar fluid rounded>

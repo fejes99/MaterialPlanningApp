@@ -7,7 +7,7 @@ import Dropdown from '../../common/components/ui/Dropdown/Dropdown';
 import DeleteModal from '../../common/components/ui/modals/DeleteModal';
 
 type Props = {
-  materials: Material[];
+  materials: (Material & { products: (ProductMaterials & { product: Product })[] })[];
 };
 
 const MaterialTable: React.FC<Props> = ({ materials }) => {
@@ -31,9 +31,9 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
         </Table.Head>
         <Table.Body className='divide-y'>
           {materials &&
-            materials.map((material: any) => {
+            materials.map((material) => {
               const products: string[] = material.products.map(
-                (productMaterial: any) => productMaterial.product.name
+                (productMaterial) => productMaterial.product.name
               );
 
               return (
@@ -51,7 +51,7 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
                     {material.name}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {material.count}
+                    {material.count.toFixed(2)}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {material.measurementUnit}
