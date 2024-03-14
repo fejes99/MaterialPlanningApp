@@ -170,12 +170,6 @@ entity ReservationMaterials {=psl
   @@id([reservationId, materialId])
 psl=}
 
-entity Supplier {=psl
-  id      Int    @id @default(autoincrement())
-  name    String @unique
-  address String
-psl=}
-
 entity PurchaseRequest {=psl
   id             Int       @id @default(autoincrement())
   createdAt      DateTime  @default(now())
@@ -199,6 +193,12 @@ entity PurchaseRequestMaterials {=psl
   measurementUnit   String
 
   @@id([purchaseRequestId, materialId])
+psl=}
+
+entity Supplier {=psl
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  address String
 psl=}
 
 
@@ -295,4 +295,19 @@ crud PurchaseRequests {
 action createPurchaseRequest {
   fn: import { createPurchaseRequest } from "@src/purchaseRequests/operations/actions.js",
   entities: [PurchaseRequest]
+}
+
+crud Suppliers {
+  entity: Supplier,
+  operations: {
+    getAll: {
+      overrideFn: import { getSuppliers } from "@src/suppliers/operations/tasks.js"
+    },
+    update: {}
+  }
+}
+
+action createSupplier {
+  fn: import { createSupplier } from "@src/suppliers/operations/actions.js",
+  entities: [Supplier]
 }

@@ -1,9 +1,19 @@
-import React from 'react';
+import { Suppliers } from 'wasp/client/crud';
+import SupplierTable from '../components/SupplierTable';
+import SupplierAddModal from '../components/modals/SupplierAddModal';
 
-type Props = {};
+const SupplierPage: React.FC = () => {
+  const { data: suppliers, isLoading, error } = Suppliers.getAll.useQuery();
 
-const SupplierPage = (props: Props) => {
-  return <div>SupplierPage</div>;
+  if (isLoading) return 'Loading...';
+  if (error) return 'Error: ' + error;
+
+  return (
+    <>
+      <SupplierAddModal />
+      <SupplierTable suppliers={suppliers} />
+    </>
+  );
 };
 
 export default SupplierPage;
