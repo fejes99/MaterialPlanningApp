@@ -1,6 +1,6 @@
+import { HttpError } from 'wasp/server';
 import { type CreatePurchaseRequest } from 'wasp/server/operations';
 import { MaterialInput } from '../../materials/types/MaterialInput';
-import { HttpError } from 'wasp/server';
 
 type CreatePurchaseRequestInput = {
   materials: MaterialInput[];

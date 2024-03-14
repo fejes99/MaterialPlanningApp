@@ -15,6 +15,7 @@ const SupplierTable: React.FC<Props> = ({ suppliers }) => {
     <div className='overflow-x-auto'>
       <Table hoverable>
         <Table.Head>
+        <Table.HeadCell>Šifra</Table.HeadCell>
           <Table.HeadCell>Naziv</Table.HeadCell>
           <Table.HeadCell>Adresa</Table.HeadCell>
           <Table.HeadCell>Porudžbenice</Table.HeadCell>
@@ -33,6 +34,9 @@ const SupplierTable: React.FC<Props> = ({ suppliers }) => {
 
               return (
                 <Table.Row>
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {supplier.id}
+                  </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {supplier.name}
                   </Table.Cell>

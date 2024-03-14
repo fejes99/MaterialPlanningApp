@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import { HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
-import { Materials } from 'wasp/client/crud';
-import {
-  useQuery,
-  getActiveProductionPlans,
-  createReservation,
-  updateMaterialCount,
-} from 'wasp/client/operations';
+import { Materials, PurchaseRequests, Suppliers } from 'wasp/client/crud';
+import { createPurchaseOrder } from 'wasp/client/operations';
 import { MaterialUnit } from '../../../materials/types/MaterialUnit';
 import { MaterialInput } from '../../../materials/types/MaterialInput';
 import { convertUnit } from '../../../materials/helpers/convertUnit';
-import { convertShortDate } from '../../../common/helpers/formatDate';
+import { convertFullDate } from '../../../common/helpers/formatDate';
 
-const ReservationAddModal: React.FC = () => {
-  const { data: productionPlans } = useQuery(getActiveProductionPlans);
+const PurchaseOrderAddModal: React.FC = () => {
   const { data: materials } = Materials.getAll.useQuery();
+  const { data: suppliers } = Suppliers.getAll.useQuery();
+  const { data: purchaseRequests } = PurchaseRequests.getAll.useQuery();
 
   const [openModal, setOpenModal] = useState(false);
-  const [selectedProductionPlan, setSelectedProductionPlan] = useState<any>(null);
+  const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+  const [selectedPurchaseRequest, setSelectedPurchaseRequest] = useState<any>(null);
   const [materialsInput, setMaterialsInput] = useState<MaterialInput[]>([]);
 
   const onCloseModal = () => {
@@ -27,71 +24,53 @@ const ReservationAddModal: React.FC = () => {
   };
 
   const resetFields = () => {
-    setSelectedProductionPlan(null);
+    setSelectedPurchaseRequest(null);
     setMaterialsInput([]);
   };
 
-  const handleProductionPlanChange = (value: any) => {
-    const selectedPlanId = parseInt(value);
-    const selectedPlan = findSelectedPlan(selectedPlanId);
-    setSelectedProductionPlan(selectedPlan);
+  const handleSupplierChange = (value: any) => {
+    const selectedSupplierId = parseInt(value);
+    const selectedSupplier = findSelectedSupplier(selectedSupplierId);
+    setSelectedSupplier(selectedSupplier);
+  };
 
-    if (selectedPlan) {
-      const mergedMaterials = mergeMaterials(selectedPlan);
-      updateMaterialsInput(mergedMaterials);
+  const findSelectedSupplier = (selectedSupplierId: number) =>
+    suppliers?.find((supplier: any) => supplier.id === selectedSupplierId);
+
+  const handlePurchaseRequestChange = (value: any) => {
+    const selectedRequestId = parseInt(value);
+    const selectedRequest = findSelectedRequest(selectedRequestId);
+    setSelectedPurchaseRequest(selectedRequest);
+
+    if (selectedRequest) {
+      const mergedMaterials = mergeMaterials(selectedRequest);
+      setMaterialsInput(mergedMaterials);
     }
   };
 
-  const findSelectedPlan = (selectedPlanId: number) =>
-    productionPlans?.find((plan: any) => plan.id === selectedPlanId);
+  const findSelectedRequest = (selectedRequestId: number) =>
+    purchaseRequests?.find((request: any) => request.id === selectedRequestId);
 
-  const mergeMaterials = (selectedPlan: any) => {
+  const mergeMaterials = (selectedRequest: any) => {
     const mergedMaterials: {
       [key: number]: { materialId: number; materialCount: number; measurementUnit: string };
     } = {};
 
-    selectedPlan.products.forEach((productionPlanProduct: any) => {
-      productionPlanProduct.product.materials.forEach((productMaterial: any) => {
-        const existingMaterial = mergedMaterials[productMaterial.materialId];
-        if (existingMaterial) {
-          mergedMaterials[productMaterial.materialId].materialCount +=
-            productMaterial.materialCount;
-        } else {
-          mergedMaterials[productMaterial.materialId] = {
-            materialId: productMaterial.materialId,
-            materialCount: productMaterial.materialCount,
-            measurementUnit: productMaterial.measurementUnit,
-          };
-        }
-      });
+    selectedRequest.materials.forEach((purchaseRequestMaterial: any) => {
+      const existingMaterial = mergedMaterials[purchaseRequestMaterial.materialId];
+      if (existingMaterial) {
+        mergedMaterials[purchaseRequestMaterial.materialId].materialCount +=
+          purchaseRequestMaterial.materialCount;
+      } else {
+        mergedMaterials[purchaseRequestMaterial.materialId] = {
+          materialId: purchaseRequestMaterial.materialId,
+          materialCount: purchaseRequestMaterial.materialCount,
+          measurementUnit: purchaseRequestMaterial.measurementUnit,
+        };
+      }
     });
+
     return Object.values(mergedMaterials);
-  };
-
-  const updateMaterialsInput = (mergedMaterials: any[]) => {
-    const updatedMaterials = mergedMaterials.map((mergedMaterial: any) => {
-      const materialInStorage = findMaterialInStorage(mergedMaterial.materialId);
-      const maxCount = calculateMaxCount(mergedMaterial, materialInStorage);
-      return { ...mergedMaterial, materialCount: maxCount };
-    });
-
-    setMaterialsInput(updatedMaterials);
-  };
-
-  const findMaterialInStorage = (materialId: number) =>
-    materials?.find((material: any) => material.id === materialId);
-
-  const calculateMaxCount = (mergedMaterial: any, materialInStorage: any) => {
-    const defaultCount = 0;
-    let materialCountInStorage = materialInStorage?.count || defaultCount;
-
-    materialCountInStorage = convertUnit(
-      materialCountInStorage,
-      materialInStorage.measurementUnit,
-      mergedMaterial.measurementUnit
-    );
-
-    return Math.min(materialCountInStorage, mergedMaterial.materialCount);
   };
 
   const handleMeasurementUnitChange = (index: number, value: string) => {
@@ -107,53 +86,42 @@ const ReservationAddModal: React.FC = () => {
     );
   };
 
-  const handleCreateReservation = async () => {
-    try {
-      await Promise.all(
-        materialsInput.map(async (material) => {
-          await updateMaterialCount({ material, operation: 'reduce' });
-        })
-      );
-
-      await createReservation({
-        createdFor: selectedProductionPlan.createdFor,
-        productionPlanId: selectedProductionPlan.id,
-        materials: materialsInput,
-      });
-
-      onCloseModal();
-    } catch (error) {
-      console.error('Error creating reservation:', error);
-    }
+  const handleCreatePurchaseOrder = () => {
+    createPurchaseOrder({
+      supplierId: selectedSupplier.id,
+      purchaseRequestId: selectedPurchaseRequest.id,
+      materials: materialsInput,
+    });
+    onCloseModal();
   };
 
   return (
     <>
       <div className='flex justify-end mb-4'>
         <Button color='blue' onClick={() => setOpenModal(true)}>
-          <HiOutlinePlus className='mr-2' /> Dodaj rezervaciju
+          <HiOutlinePlus className='mr-2' /> Dodaj porudžbinu
         </Button>
       </div>
 
       <Modal show={openModal} onClose={onCloseModal}>
-        <Modal.Header>Dodaj rezervaciju</Modal.Header>
+        <Modal.Header>Dodaj porudžbinu</Modal.Header>
         <Modal.Body>
           <div className='space-y-6'>
             <div>
               <div className='mb-2 block'>
-                <Label value='Proizvodni planovi' />
+                <Label value='Zahtevi za nabavku' />
               </div>
               <Select
                 required
-                value={selectedProductionPlan?.id || ''}
-                onChange={(event) => handleProductionPlanChange(event.target.value)}
+                value={selectedPurchaseRequest?.id || ''}
+                onChange={(event) => handlePurchaseRequestChange(event.target.value)}
               >
                 <option value='' disabled hidden>
-                  Izaberite proizvodni plan
+                  Izaberite zahtev
                 </option>
-                {productionPlans?.map((plan: any) => (
-                  <option key={plan.id} value={plan.id}>
-                    {plan.code}
+                {purchaseRequests?.map((request: any) => (
+                  <option key={request.id} value={request.id}>
+                    {request.id} ({convertFullDate(request.createdAt)})
                   </option>
                 ))}
               </Select>
@@ -161,16 +129,22 @@ const ReservationAddModal: React.FC = () => {
 
             <div>
               <div className='mb-2 block'>
-                <Label htmlFor='code' value='Planirani mesec' />
+                <Label value='Dobavljači' />
               </div>
-              <TextInput
-                id='createdFor'
-                value={
-                  selectedProductionPlan ? convertShortDate(selectedProductionPlan.createdFor) : ''
-                }
-                disabled
+              <Select
                 required
-              />
+                value={selectedSupplier?.id || ''}
+                onChange={(event) => handleSupplierChange(event.target.value)}
+              >
+                <option value='' disabled hidden>
+                  Izaberite dobavljača
+                </option>
+                {suppliers?.map((supplier: any) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.id} ({supplier.name})
+                  </option>
+                ))}
+              </Select>
             </div>
 
             <div>
@@ -264,7 +238,7 @@ const ReservationAddModal: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className='w-full'>
-            <Button onClick={handleCreateReservation}>Dodaj rezervaciju</Button>
+            <Button onClick={handleCreatePurchaseOrder}>Dodaj porudžbinu</Button>
           </div>
         </Modal.Footer>
       </Modal>
@@ -272,4 +246,4 @@ const ReservationAddModal: React.FC = () => {
   );
 };
 
-export default ReservationAddModal;
+export default PurchaseOrderAddModal;

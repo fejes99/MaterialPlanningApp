@@ -208,16 +208,15 @@ entity Supplier {=psl
 psl=}
 
 entity PurchaseOrder {=psl
-  id                     Int                  @id @default(autoincrement())
-  createdAt              DateTime             @default(now())
-  supplierConfirmation   SupplierConfirmation @relation(fields: [supplierConfirmationId], references: [id])
-  supplierConfirmationId Int                  @unique
-  user                   User                 @relation(fields: [userId], references: [id])
+  id                     Int                      @id @default(autoincrement())
+  createdAt              DateTime                 @default(now())
+  user                   User                     @relation(fields: [userId], references: [id])
   userId                 Int
-  supplier               Supplier             @relation(fields: [supplierId], references: [id])
+  supplier               Supplier                 @relation(fields: [supplierId], references: [id])
   supplierId             Int                  
-  purchaseRequest        PurchaseRequest      @relation(fields: [purchaseRequestId], references: [id])
+  purchaseRequest        PurchaseRequest          @relation(fields: [purchaseRequestId], references: [id])
   purchaseRequestId      Int
+  supplierConfirmation   SupplierConfirmation? 
   materials              PurchaseOrderMaterials[]
 psl=}
 
@@ -233,13 +232,14 @@ entity PurchaseOrderMaterials {=psl
 psl=}
 
 entity SupplierConfirmation {=psl
-  id            Int                             @id @default(autoincrement())
-  createdAt     DateTime                        @default(now())
-  deliveryDate  DateTime
-  purchaseOrder PurchaseOrder?
-  supplier      Supplier                        @relation(fields: [supplierId], references: [id])
-  supplierId    Int
-  materials     SupplierConfirmationMaterials[]    
+  id              Int                             @id @default(autoincrement())
+  createdAt       DateTime                        @default(now())
+  deliveryDate    DateTime
+  purchaseOrder   PurchaseOrder                   @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId Int                             @unique
+  supplier        Supplier                        @relation(fields: [supplierId], references: [id])
+  supplierId      Int
+  materials       SupplierConfirmationMaterials[]    
 psl=}
 
 entity SupplierConfirmationMaterials {=psl
@@ -361,4 +361,19 @@ crud Suppliers {
 action createSupplier {
   fn: import { createSupplier } from "@src/suppliers/operations/actions.js",
   entities: [Supplier]
+}
+
+crud PurchaseOrders {
+  entity: PurchaseOrder,
+  operations: {
+    getAll: {
+      overrideFn: import { getPurchaseOrders } from "@src/purchaseOrders/operations/tasks.js"
+    },
+    update: {}
+  }
+}
+
+action createPurchaseOrder {
+  fn: import { createPurchaseOrder } from "@src/purchaseOrders/operations/actions.js",
+  entities: [PurchaseOrder]
 }

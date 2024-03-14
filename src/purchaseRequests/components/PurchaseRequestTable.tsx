@@ -33,13 +33,13 @@ const PurchaseRequestTable: React.FC<Props> = ({ purchaseRequests }) => {
     <div className='overflow-x-auto'>
       <Table hoverable>
         <Table.Head>
+          <Table.HeadCell>Šifra</Table.HeadCell>
           <Table.HeadCell>Napravljeno</Table.HeadCell>
           <Table.HeadCell>Status</Table.HeadCell>
           <Table.HeadCell>Napravio</Table.HeadCell>
           <Table.HeadCell>Obradio</Table.HeadCell>
           <Table.HeadCell>Obrađeno</Table.HeadCell>
           <Table.HeadCell>Isporučeno</Table.HeadCell>
-          <Table.HeadCell>Primljeno</Table.HeadCell>
           <Table.HeadCell>Materijali</Table.HeadCell>
           <Table.HeadCell>Akcije</Table.HeadCell>
         </Table.Head>
@@ -56,6 +56,9 @@ const PurchaseRequestTable: React.FC<Props> = ({ purchaseRequests }) => {
                   key={purchaseRequest.id}
                   className='bg-white dark:border-gray-700 dark:bg-gray-800'
                 >
+                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                    {purchaseRequest.id}
+                  </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {convertFullDate(purchaseRequest.createdAt)}
                   </Table.Cell>
@@ -80,11 +83,6 @@ const PurchaseRequestTable: React.FC<Props> = ({ purchaseRequests }) => {
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {purchaseRequest.deliveryDate
                       ? convertFullDate(purchaseRequest.deliveryDate)
-                      : '/'}
-                  </Table.Cell>
-                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {purchaseRequest.receiptDate
-                      ? convertFullDate(purchaseRequest.receiptDate)
                       : '/'}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>

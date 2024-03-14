@@ -1,9 +1,22 @@
-import React from 'react';
+import { useAuth } from 'wasp/client/auth';
+import { PurchaseOrders } from 'wasp/client/crud';
+import PurchaseOrderTable from '../components/PurchaseOrderTable';
+import PurchaseOrderAddModal from '../components/modals/PurchaseOrderAddModal';
+import { isPlanner } from '../../user/helpers/isPlanner';
 
-type Props = {};
+const PurchaseOrderPage: React.FC = () => {
+  const { data: user } = useAuth();
+  const { data: purchaseOrders, isLoading, error } = PurchaseOrders.getAll.useQuery();
 
-const PurchaseOrderPage = (props: Props) => {
-  return <div>PurchaseOrderPage</div>;
+  if (isLoading) return 'Loading...';
+  if (error) return 'Error: ' + error;
+
+  return (
+    <>
+      <PurchaseOrderAddModal />
+      <PurchaseOrderTable purchaseOrders={purchaseOrders} />
+    </>
+  );
 };
 
 export default PurchaseOrderPage;
