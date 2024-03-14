@@ -92,19 +92,22 @@ entity User {=psl
   surrname                  String?
   role                      String?
   reservations              Reservation[]
-  purchaseRequestsCreated   PurchaseRequest[] @relation(name: "createdBy")
-  purchaseRequestsProcessed PurchaseRequest[] @relation(name: "processedBy")
+  createdPurchaseRequests   PurchaseRequest[] @relation(name: "createdBy")
+  processedPurchaseRequests PurchaseRequest[] @relation(name: "processedBy")
+  purchaseOrders            PurchaseOrder[]
 psl=}
 
 entity Material {=psl
-  id               Int                         @id @default(autoincrement())
-  code             String                      @unique
-  name             String
-  count            Float
-  measurementUnit  String
-  products         ProductMaterials[]
-  reservations     ReservationMaterials[]
-  purchaseRequests PurchaseRequestMaterials[]
+  id                    Int                             @id @default(autoincrement())
+  code                  String                          @unique
+  name                  String
+  count                 Float
+  measurementUnit       String
+  products              ProductMaterials[]
+  reservations          ReservationMaterials[]
+  purchaseRequests      PurchaseRequestMaterials[]
+  purchaseOrders        PurchaseOrderMaterials[]
+  supplierConfirmations SupplierConfirmationMaterials[]
 psl=}
 
 entity ProductMaterials {=psl
@@ -182,6 +185,7 @@ entity PurchaseRequest {=psl
   processedBy    User?      @relation(name: "processedBy", fields: [processedById], references: [id])
   processedById  Int?
   materials      PurchaseRequestMaterials[]
+  purchaseOrders PurchaseOrder[]
 psl=}
 
 entity PurchaseRequestMaterials {=psl
@@ -196,11 +200,58 @@ entity PurchaseRequestMaterials {=psl
 psl=}
 
 entity Supplier {=psl
-  id      Int    @id @default(autoincrement())
-  name    String @unique
-  address String
+  id                    Int                    @id @default(autoincrement())
+  name                  String                 @unique
+  address               String
+  purchaseOrders        PurchaseOrder[]
+  supplierConfirmations SupplierConfirmation[]
 psl=}
 
+entity PurchaseOrder {=psl
+  id                     Int                  @id @default(autoincrement())
+  createdAt              DateTime             @default(now())
+  supplierConfirmation   SupplierConfirmation @relation(fields: [supplierConfirmationId], references: [id])
+  supplierConfirmationId Int                  @unique
+  user                   User                 @relation(fields: [userId], references: [id])
+  userId                 Int
+  supplier               Supplier             @relation(fields: [supplierId], references: [id])
+  supplierId             Int                  
+  purchaseRequest        PurchaseRequest      @relation(fields: [purchaseRequestId], references: [id])
+  purchaseRequestId      Int
+  materials              PurchaseOrderMaterials[]
+psl=}
+
+entity PurchaseOrderMaterials {=psl
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId Int
+  material        Material      @relation(fields: [materialId], references: [id])
+  materialId      Int
+  materialCount   Float
+  measurementUnit String
+
+  @@id([purchaseOrderId, materialId])
+psl=}
+
+entity SupplierConfirmation {=psl
+  id            Int                             @id @default(autoincrement())
+  createdAt     DateTime                        @default(now())
+  deliveryDate  DateTime
+  purchaseOrder PurchaseOrder?
+  supplier      Supplier                        @relation(fields: [supplierId], references: [id])
+  supplierId    Int
+  materials     SupplierConfirmationMaterials[]    
+psl=}
+
+entity SupplierConfirmationMaterials {=psl
+  supplierConfirmation   SupplierConfirmation @relation(fields: [supplierConfirmationId], references: [id])
+  supplierConfirmationId Int
+  material               Material             @relation(fields: [materialId], references: [id])
+  materialId             Int
+  materialCount          Float
+  measurementUnit        String
+
+  @@id([supplierConfirmationId, materialId])
+psl=}
 
 // ----------------- User operations ------------------ //
 
