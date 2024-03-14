@@ -42,48 +42,69 @@ page MainPage {
   component: import Main from "@src/pages/MainPage.tsx"
 }
 
-route MaterialRoute {path: "/materials", to: MaterialPage }
+route MaterialRoute { path: "/materials", to: MaterialPage }
 page MaterialPage {
   authRequired: true,
   component: import Material from "@src/materials/pages/MaterialPage.tsx"
 }
 
-route ProductRoute {path: "/products", to: ProductPage }
+route ProductRoute { path: "/products", to: ProductPage }
 page ProductPage {
   authRequired: true,
   component: import Product from "@src/products/pages/ProductPage.tsx"
 }
 
-route ProductionPlanRoute {path: "/production-plans", to: ProductionPlanPage }
+route ProductionPlanRoute { path: "/production-plans", to: ProductionPlanPage }
 page ProductionPlanPage {
   authRequired: true,
   component: import ProductionPlan from "@src/productionPlans/pages/ProductionPlanPage.tsx"
 }
 
-route ReservationRoute {path: "/reservations", to: ReservationPage }
+route ReservationRoute { path: "/reservations", to: ReservationPage }
 page ReservationPage {
   authRequired: true,
-  component: import ReservationPlan from "@src/reservations/pages/ReservationPage.tsx"
+  component: import Reservation from "@src/reservations/pages/ReservationPage.tsx"
+}
+
+route PurchaseRequestRoute { path: "/purchase-requests", to: PurchaseRequestPage }
+page PurchaseRequestPage {
+  authRequired: true,
+  component: import PurchaseRequest from "@src/purchaseRequests/pages/PurchaseRequestPage.tsx"
+}
+
+route PurchaseOrderRoute { path: "/purchase-orders", to: PurchaseOrderPage }
+page PurchaseOrderPage {
+  authRequired: true,
+  component: import PurchaseOrder from "@src/purchaseOrders/pages/PurchaseOrderPage.tsx"
+}
+
+route SupplierRoute { path: "/suppliers", to: SupplierPage }
+page SupplierPage {
+  authRequired: true,
+  component: import Supplier from "@src/suppliers/pages/SupplierPage.tsx"
 }
 
 // ----------------- Entities ------------------ //
 
 entity User {=psl
-  id           Int           @id @default(autoincrement())
-  name         String?
-  surrname     String?
-  role         String?
-  reservations Reservation[]?
+  id                        Int               @id @default(autoincrement())
+  name                      String?
+  surrname                  String?
+  role                      String?
+  reservations              Reservation[]
+  purchaseRequestsCreated   PurchaseRequest[] @relation(name: "createdBy")
+  purchaseRequestsProcessed PurchaseRequest[] @relation(name: "processedBy")
 psl=}
 
 entity Material {=psl
-  id              Int                @id @default(autoincrement())
-  code            String             @unique
-  name            String
-  count           Float
-  measurementUnit String
-  products        ProductMaterials[]
-  reservations    ReservationMaterials[]
+  id               Int                         @id @default(autoincrement())
+  code             String                      @unique
+  name             String
+  count            Float
+  measurementUnit  String
+  products         ProductMaterials[]
+  reservations     ReservationMaterials[]
+  purchaseRequests PurchaseRequestMaterials[]
 psl=}
 
 entity ProductMaterials {=psl
@@ -149,6 +170,38 @@ entity ReservationMaterials {=psl
   @@id([reservationId, materialId])
 psl=}
 
+entity Supplier {=psl
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  address String
+psl=}
+
+entity PurchaseRequest {=psl
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  status         String
+  processingDate DateTime?
+  deliveryDate   DateTime?
+  receiptDate    DateTime?
+  author         User      @relation(name: "createdBy", fields: [authorId], references: [id])
+  authorId       Int
+  processedBy    User?      @relation(name: "processedBy", fields: [processedById], references: [id])
+  processedById  Int?
+  materials      PurchaseRequestMaterials[]
+psl=}
+
+entity PurchaseRequestMaterials {=psl
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id], onDelete: Cascade)
+  purchaseRequestId Int
+  material          Material        @relation(fields: [materialId], references: [id])
+  materialId        Int
+  materialCount     Float
+  measurementUnit   String
+
+  @@id([purchaseRequestId, materialId])
+psl=}
+
+
 // ----------------- User operations ------------------ //
 
 crud Materials {
@@ -157,7 +210,6 @@ crud Materials {
     getAll: {
       overrideFn: import { getMaterials } from "@src/materials/operations/tasks.js"
     },
-    get: {},
     update: {
       overrideFn: import { updateMaterial } from "@src/materials/operations/tasks.js"
     },
@@ -181,7 +233,6 @@ crud Products {
     getAll: {
       overrideFn: import { getProducts } from "@src/products/operations/tasks.js"
     },
-    get: {},
     update: {
       overrideFn: import { updateProduct } from "@src/products/operations/tasks.js"
     },
@@ -222,8 +273,6 @@ crud Reservations {
     getAll: {
       overrideFn: import { getReservations } from "@src/reservations/operations/tasks.js"
     },
-    get: {},
-    update: {},
     delete: {}
   }
 }
@@ -231,4 +280,19 @@ crud Reservations {
 action createReservation {
   fn: import { createReservation } from "@src/reservations/operations/actions.js",
   entities: [User, Reservation, ProductionPlan]
+}
+
+crud PurchaseRequests {
+  entity: PurchaseRequest,
+  operations: {
+    getAll: {
+      overrideFn: import { getPurchaseRequests } from "@src/purchaseRequests/operations/tasks.js"
+    },
+    delete: {}
+  }
+}
+
+action createPurchaseRequest {
+  fn: import { createPurchaseRequest } from "@src/purchaseRequests/operations/actions.js",
+  entities: [PurchaseRequest]
 }

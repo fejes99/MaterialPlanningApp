@@ -1,4 +1,4 @@
-import { Checkbox, Table } from 'flowbite-react';
+import { Table } from 'flowbite-react';
 import { type ProductionPlan, type ProductionPlanProducts, type Product } from 'wasp/entities';
 import { ProductionPlans } from 'wasp/client/crud';
 import { convertFullDate, convertShortDate } from '../../common/helpers/formatDate';
@@ -20,9 +20,6 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
     <div className='overflow-x-auto'>
       <Table hoverable>
         <Table.Head>
-          <Table.HeadCell className='p-4'>
-            <Checkbox />
-          </Table.HeadCell>
           <Table.HeadCell>Šifra</Table.HeadCell>
           <Table.HeadCell>Planirani mesec</Table.HeadCell>
           <Table.HeadCell>Napravljeno dana</Table.HeadCell>
@@ -44,9 +41,6 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
                   key={productionPlan.id}
                   className='bg-white dark:border-gray-700 dark:bg-gray-800'
                 >
-                  <Table.Cell className='p-4'>
-                    <Checkbox />
-                  </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {productionPlan.code}
                   </Table.Cell>

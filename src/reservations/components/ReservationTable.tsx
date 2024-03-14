@@ -1,4 +1,4 @@
-import { Checkbox, Table } from 'flowbite-react';
+import { Table } from 'flowbite-react';
 import {
   type Reservation,
   type ReservationMaterials,
@@ -24,12 +24,9 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
   const handleDelete = (id: number) => deleteReservation({ id });
 
   return (
-    <div className='overflow-x-auto "h-[80vh]"'>
+    <div className='overflow-x-auto'>
       <Table hoverable>
         <Table.Head>
-          <Table.HeadCell className='p-4'>
-            <Checkbox />
-          </Table.HeadCell>
           <Table.HeadCell>Planirani mesec</Table.HeadCell>
           <Table.HeadCell>Napravljeno dana</Table.HeadCell>
           <Table.HeadCell>Status</Table.HeadCell>
@@ -51,9 +48,6 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
                   key={reservation.id}
                   className='bg-white dark:border-gray-700 dark:bg-gray-800'
                 >
-                  <Table.Cell className='p-4'>
-                    <Checkbox />
-                  </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {convertShortDate(reservation.createdFor)}
                   </Table.Cell>

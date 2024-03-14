@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Avatar, Button, Dropdown, Navbar } from 'flowbite-react';
 import { logout, useAuth } from 'wasp/client/auth';
 import { UserRole } from '../../../../user/types/UserRole';
+import { isPlanner } from '../../../../user/helpers/isPlanner';
+import { isBuyer } from '../../../../user/helpers/isBuyer';
 
 const MainNavbar: React.FC = () => {
   const { data: user } = useAuth();
@@ -33,9 +35,6 @@ const MainNavbar: React.FC = () => {
               </span>
               <span className='block truncate text-sm font-medium'>{user.role}</span>
             </Dropdown.Header>
-            <Dropdown.Item>Dashboard</Dropdown.Item>
-            <Dropdown.Item>Settings</Dropdown.Item>
-            <Dropdown.Divider />
             <Dropdown.Item onClick={logout}>Izloguj se</Dropdown.Item>
           </Dropdown>
         ) : (
@@ -45,7 +44,7 @@ const MainNavbar: React.FC = () => {
         )}
         <Navbar.Toggle />
       </div>
-      {user && user.role === UserRole.Planner && (
+      {isPlanner(user) && (
         <Navbar.Collapse>
           <Navbar.Link href='/materials' className='text-lg'>
             Materijali
@@ -58,6 +57,23 @@ const MainNavbar: React.FC = () => {
           </Navbar.Link>
           <Navbar.Link href='/reservations' className='text-lg'>
             Rezervacije
+          </Navbar.Link>
+          <Navbar.Link href='/purchase-requests' className='text-lg'>
+            Zahtevi
+          </Navbar.Link>
+        </Navbar.Collapse>
+      )}
+
+      {isBuyer(user) && (
+        <Navbar.Collapse>
+          <Navbar.Link href='/purchase-requests' className='text-lg'>
+            Zahtevi
+          </Navbar.Link>
+          <Navbar.Link href='/purchase-orders' className='text-lg'>
+            Porudžbine
+          </Navbar.Link>
+          <Navbar.Link href='/suppliers' className='text-lg'>
+            Dobavljači
           </Navbar.Link>
         </Navbar.Collapse>
       )}

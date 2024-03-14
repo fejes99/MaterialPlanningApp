@@ -31,16 +31,6 @@ const ProductAddModal: React.FC = () => {
     ]);
   };
 
-  const handleCreateProduct = () => {
-    createProduct({
-      code,
-      name,
-      description,
-      materials: materialsInput,
-    });
-    resetFields();
-  };
-
   const handleAddMaterial = () =>
     setMaterialsInput([
       ...materialsInput,
@@ -67,6 +57,16 @@ const ProductAddModal: React.FC = () => {
 
     handleMaterialChange(index, 'measurementUnit', value);
     handleMaterialChange(index, 'materialCount', updatedCount);
+  };
+
+  const handleCreateProduct = async () => {
+    createProduct({
+      code,
+      name,
+      description,
+      materials: materialsInput,
+    });
+    resetFields();
   };
 
   return (

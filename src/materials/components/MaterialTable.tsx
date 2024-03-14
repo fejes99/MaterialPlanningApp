@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, Table } from 'flowbite-react';
+import { Table } from 'flowbite-react';
 import { type Product, type Material, type ProductMaterials } from 'wasp/entities';
 import { Materials } from 'wasp/client/crud';
 import MaterialUpdateModal from './modals/MaterialUpdateModal';
@@ -19,9 +19,6 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
     <div className='overflow-x-auto'>
       <Table hoverable>
         <Table.Head>
-          <Table.HeadCell className='p-4'>
-            <Checkbox />
-          </Table.HeadCell>
           <Table.HeadCell>Šifra</Table.HeadCell>
           <Table.HeadCell>Naziv</Table.HeadCell>
           <Table.HeadCell>Količina</Table.HeadCell>
@@ -41,9 +38,6 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
                   key={material.id}
                   className='bg-white dark:border-gray-700 dark:bg-gray-800'
                 >
-                  <Table.Cell className='p-4'>
-                    <Checkbox />
-                  </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {material.code}
                   </Table.Cell>

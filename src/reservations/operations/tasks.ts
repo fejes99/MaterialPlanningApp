@@ -10,9 +10,9 @@ import { type Reservations } from 'wasp/server/crud';
 export const getReservations: Reservations.GetAllQuery<
   void,
   (Reservation & {
-    materials: (ReservationMaterials & { material: Material })[];
     user: User | null;
     productionPlan: ProductionPlan;
+    materials: (ReservationMaterials & { material: Material })[];
   })[]
 > = async (args, context) => {
   const { Reservation } = context.entities;
