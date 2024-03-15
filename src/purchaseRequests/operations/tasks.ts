@@ -2,7 +2,7 @@ import {
   type PurchaseRequest,
   type Material,
   type User,
-  PurchaseRequestMaterials,
+  type PurchaseRequestMaterials,
 } from 'wasp/entities';
 import { type PurchaseRequests } from 'wasp/server/crud';
 

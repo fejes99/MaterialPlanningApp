@@ -75,6 +75,9 @@ const MainNavbar: React.FC = () => {
           <Navbar.Link href='/suppliers' className='text-lg'>
             Dobavljači
           </Navbar.Link>
+          <Navbar.Link href='/supplier-confirmations' className='text-lg'>
+            Potvrde
+          </Navbar.Link>
         </Navbar.Collapse>
       )}
     </Navbar>

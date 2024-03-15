@@ -84,6 +84,12 @@ page SupplierPage {
   component: import Supplier from "@src/suppliers/pages/SupplierPage.tsx"
 }
 
+route SupplierConfirmationRoute { path: "/supplier-confirmations", to: SupplierConfirmationPage }
+page SupplierConfirmationPage {
+  authRequired: true,
+  component: import Supplier from "@src/supplierConfirmations/pages/SupplierConfirmationPage.tsx"
+}
+
 // ----------------- Entities ------------------ //
 
 entity User {=psl
@@ -376,4 +382,18 @@ crud PurchaseOrders {
 action createPurchaseOrder {
   fn: import { createPurchaseOrder } from "@src/purchaseOrders/operations/actions.js",
   entities: [PurchaseOrder]
+}
+
+crud SupplierConfirmations {
+  entity: SupplierConfirmation,
+  operations: {
+    getAll: {
+      overrideFn: import { getSupplierConfirmations } from "@src/supplierConfirmations/operations/tasks.js"
+    }
+  }
+}
+
+action createSupplierConfirmation {
+  fn: import { createSupplierConfirmation } from "@src/supplierConfirmations/operations/actions.js",
+  entities: [SupplierConfirmation]
 }
