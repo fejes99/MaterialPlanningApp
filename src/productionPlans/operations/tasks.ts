@@ -15,5 +15,8 @@ export const getProductionPlans: ProductionPlans.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      createdFor: 'asc',
+    },
   });
 };

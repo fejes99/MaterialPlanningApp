@@ -1,4 +1,5 @@
 import { HttpError } from 'wasp/server';
+import { type PurchaseOrder } from 'wasp/entities';
 import { type CreatePurchaseOrder } from 'wasp/server/operations';
 import { MaterialInput } from './../../materials/types/MaterialInput';
 
@@ -8,10 +9,10 @@ type CreatePurchaseOrderInput = {
   materials: MaterialInput[];
 };
 
-export const createPurchaseOrder: CreatePurchaseOrder<CreatePurchaseOrderInput, void> = async (
-  args,
-  context
-) => {
+export const createPurchaseOrder: CreatePurchaseOrder<
+  CreatePurchaseOrderInput,
+  PurchaseOrder
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(403);
   }
@@ -19,7 +20,7 @@ export const createPurchaseOrder: CreatePurchaseOrder<CreatePurchaseOrderInput, 
   const { PurchaseOrder } = context.entities;
   const { supplierId, purchaseRequestId, materials } = args;
 
-  await PurchaseOrder.create({
+  return await PurchaseOrder.create({
     data: {
       user: {
         connect: {

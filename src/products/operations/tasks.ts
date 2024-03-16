@@ -15,6 +15,9 @@ export const getProducts: Products.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      code: 'asc',
+    },
   });
 };
 

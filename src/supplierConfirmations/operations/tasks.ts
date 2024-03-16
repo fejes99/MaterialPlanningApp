@@ -27,5 +27,8 @@ export const getSupplierConfirmations: SupplierConfirmations.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      id: 'desc',
+    },
   });
 };

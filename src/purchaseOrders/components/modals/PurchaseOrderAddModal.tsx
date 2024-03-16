@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { HiOutlinePlus, HiOutlineX } from 'react-icons/hi';
 import { Button, Label, Modal, TextInput, Select } from 'flowbite-react';
 import { Materials, PurchaseRequests, Suppliers } from 'wasp/client/crud';
-import { createPurchaseOrder } from 'wasp/client/operations';
+import {
+  createPurchaseOrder,
+  createSupplierConfirmation,
+  updatePurchaseRequestProcessingDate,
+  updatePurchaseRequestDeliveryDate,
+} from 'wasp/client/operations';
 import { MaterialUnit } from '../../../materials/types/MaterialUnit';
 import { MaterialInput } from '../../../materials/types/MaterialInput';
 import { convertUnit } from '../../../materials/helpers/convertUnit';
@@ -86,12 +91,32 @@ const PurchaseOrderAddModal: React.FC = () => {
     );
   };
 
-  const handleCreatePurchaseOrder = () => {
-    createPurchaseOrder({
+  const handleCreatePurchaseOrder = async () => {
+    const purchaseOrder = await createPurchaseOrder({
       supplierId: selectedSupplier.id,
       purchaseRequestId: selectedPurchaseRequest.id,
       materials: materialsInput,
     });
+
+    await updatePurchaseRequestProcessingDate({
+      id: purchaseOrder.purchaseRequestId,
+    });
+
+    const deliveryDate = new Date(purchaseOrder.createdAt);
+    deliveryDate.setDate(deliveryDate.getDate() + 1);
+
+    await createSupplierConfirmation({
+      deliveryDate,
+      supplierId: selectedSupplier.id,
+      purchaseOrderId: purchaseOrder.id,
+      materials: materialsInput,
+    });
+
+    await updatePurchaseRequestDeliveryDate({
+      id: purchaseOrder.purchaseRequestId,
+      deliveryDate,
+    });
+
     onCloseModal();
   };
 

@@ -24,7 +24,7 @@ const ReservationTable: React.FC<Props> = ({ reservations }) => {
   const handleDelete = (id: number) => deleteReservation({ id });
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Planirani mesec</Table.HeadCell>

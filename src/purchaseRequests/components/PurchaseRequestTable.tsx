@@ -30,7 +30,7 @@ const PurchaseRequestTable: React.FC<Props> = ({ purchaseRequests }) => {
   const handleDelete = (id: number) => deletePurchaseRequest({ id });
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>
@@ -39,7 +39,7 @@ const PurchaseRequestTable: React.FC<Props> = ({ purchaseRequests }) => {
           <Table.HeadCell>Napravio</Table.HeadCell>
           <Table.HeadCell>Obradio</Table.HeadCell>
           <Table.HeadCell>Obrađeno</Table.HeadCell>
-          <Table.HeadCell>Isporučeno</Table.HeadCell>
+          <Table.HeadCell>Datum isporuke</Table.HeadCell>
           <Table.HeadCell>Materijali</Table.HeadCell>
           <Table.HeadCell>Akcije</Table.HeadCell>
         </Table.Head>

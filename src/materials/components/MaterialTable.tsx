@@ -1,4 +1,3 @@
-import React from 'react';
 import { Table } from 'flowbite-react';
 import { type Product, type Material, type ProductMaterials } from 'wasp/entities';
 import { Materials } from 'wasp/client/crud';
@@ -16,7 +15,7 @@ const MaterialTable: React.FC<Props> = ({ materials }) => {
   const handleDelete = (id: number) => deleteMaterial({ id });
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>

@@ -15,7 +15,7 @@ const ProductTable: React.FC<Props> = ({ products }) => {
   const handleDelete = (id: number) => deleteProduct({ id });
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>

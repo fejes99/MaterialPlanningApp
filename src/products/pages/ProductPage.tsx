@@ -9,10 +9,10 @@ const ProductPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       <ProductAddModal />
       <ProductTable products={products} />
-    </>
+    </div>
   );
 };
 export default ProductPage;

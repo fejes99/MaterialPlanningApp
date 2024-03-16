@@ -1,5 +1,5 @@
 import '../Main.css';
-import React from 'react';
+
 import { type User } from 'wasp/entities';
 import { Button } from 'flowbite-react';
 import { HiAdjustments, HiCloudDownload, HiUserCircle } from 'react-icons/hi';

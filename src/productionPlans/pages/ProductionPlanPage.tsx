@@ -9,10 +9,10 @@ const ProductionPlanPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       <ProductionPlanAddModal />
       <ProductionPlanTable productionPlans={productionPlans} />
-    </>
+    </div>
   );
 };
 export default ProductionPlanPage;

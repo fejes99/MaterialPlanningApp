@@ -1,61 +1,59 @@
 import { Table } from 'flowbite-react';
 import {
-  type Supplier,
-  type SupplierConfirmation,
   type Material,
   type PurchaseOrder,
-  type SupplierConfirmationMaterials,
+  type Supplier,
+  type ReceiptMaterials,
+  type Receipt,
 } from 'wasp/entities';
 import { convertFullDate } from '../../common/helpers/formatDate';
 import Dropdown from '../../common/components/ui/Dropdown/Dropdown';
 
 interface Props {
-  confirmations: (SupplierConfirmation & {
-    supplier: Supplier;
-    purchaseOrder: PurchaseOrder;
-    materials: (SupplierConfirmationMaterials & { material: Material })[];
+  receipts: (Receipt & {
+    purchaseOrder: PurchaseOrder & {
+      supplier: Supplier;
+    };
+    materials: (ReceiptMaterials & { material: Material })[];
   })[];
 }
 
-const SupplierConfirmationTable: React.FC<Props> = ({ confirmations }) => {
+const ReceiptTable: React.FC<Props> = ({ receipts }) => {
   return (
     <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>
-          <Table.HeadCell>Napravljeno dana</Table.HeadCell>
-          <Table.HeadCell>Datum isporuke</Table.HeadCell>
+          <Table.HeadCell>Napravljeno</Table.HeadCell>
           <Table.HeadCell>Porudžbina</Table.HeadCell>
           <Table.HeadCell>Dobavljač</Table.HeadCell>
-          <Table.HeadCell>Materiali</Table.HeadCell>
+          <Table.HeadCell>Materijali</Table.HeadCell>
         </Table.Head>
         <Table.Body className='divide-y'>
-          {confirmations &&
-            confirmations.map((confirmation) => {
-              const materials: string[] = confirmation.materials.map(
-                (confirmationMaterial) =>
-                  `${confirmationMaterial.material.name} (${confirmationMaterial.materialCount} ${confirmationMaterial.measurementUnit})`
+          {receipts &&
+            receipts.map((receipt) => {
+              const { supplier } = receipt.purchaseOrder;
+              const materials: string[] = receipt.materials.map(
+                (receiptMaterial) =>
+                  `${receiptMaterial.material.name} (${receiptMaterial.materialCount} ${receiptMaterial.measurementUnit})`
               );
 
               return (
                 <Table.Row
-                  key={confirmation.id}
-                  className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                  key={receipt.id}
+                  className='bg-white dark:border-gray-700 dark:bg-gray-800 '
                 >
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {confirmation.id}
+                    {receipt.id}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {convertFullDate(confirmation.createdAt)}
+                    {convertFullDate(receipt.createdAt)}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {convertFullDate(confirmation.deliveryDate)}
+                    {receipt.purchaseOrderId}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {confirmation.purchaseOrder.id}
-                  </Table.Cell>
-                  <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    {confirmation.supplier.name}
+                    {supplier.name}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     <Dropdown label='Materijali' values={materials} />
@@ -69,4 +67,4 @@ const SupplierConfirmationTable: React.FC<Props> = ({ confirmations }) => {
   );
 };
 
-export default SupplierConfirmationTable;
+export default ReceiptTable;

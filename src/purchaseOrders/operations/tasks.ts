@@ -4,6 +4,7 @@ import {
   type Supplier,
   type SupplierConfirmation,
   type PurchaseRequest,
+  type Receipt,
   type PurchaseOrderMaterials,
   type Material,
 } from 'wasp/entities';
@@ -14,8 +15,9 @@ export const getPurchaseOrders: PurchaseOrders.GetAllQuery<
   (PurchaseOrder & {
     user: User;
     supplier: Supplier;
-    supplierConfirmation: SupplierConfirmation;
+    supplierConfirmation: SupplierConfirmation | null;
     purchaseRequest: PurchaseRequest;
+    receipt: Receipt | null;
     materials: (PurchaseOrderMaterials & { material: Material })[];
   })[]
 > = async (args, context) => {
@@ -27,11 +29,15 @@ export const getPurchaseOrders: PurchaseOrders.GetAllQuery<
       supplier: true,
       supplierConfirmation: true,
       purchaseRequest: true,
+      receipt: true,
       materials: {
         include: {
           material: true,
         },
       },
+    },
+    orderBy: {
+      id: 'desc',
     },
   });
 };

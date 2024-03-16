@@ -19,7 +19,8 @@ app TestApp {
     system: PostgreSQL,
     seeds: [
       import { materialSeed } from "@src/seeds.js",
-      import { productSeed } from "@src/seeds.js"
+      import { productSeed } from "@src/seeds.js",
+      import { supplierSeed } from "@src/seeds.js"
     ]
   }
 }
@@ -90,6 +91,12 @@ page SupplierConfirmationPage {
   component: import Supplier from "@src/supplierConfirmations/pages/SupplierConfirmationPage.tsx"
 }
 
+route ReceiptRoute { path: "/receipts", to: ReceiptPage }
+page ReceiptPage {
+  authRequired: true,
+  component: import Receipt from "@src/receipts/pages/ReceiptPage.tsx"
+}
+
 // ----------------- Entities ------------------ //
 
 entity User {=psl
@@ -114,17 +121,7 @@ entity Material {=psl
   purchaseRequests      PurchaseRequestMaterials[]
   purchaseOrders        PurchaseOrderMaterials[]
   supplierConfirmations SupplierConfirmationMaterials[]
-psl=}
-
-entity ProductMaterials {=psl
-  product         Product  @relation(fields: [productId], references: [id])
-  productId       Int
-  material        Material @relation(fields: [materialId], references: [id])
-  materialId      Int
-  materialCount   Float
-  measurementUnit String
-  
-  @@id([productId, materialId])
+  receipts              ReceiptMaterials[]
 psl=}
 
 entity Product {=psl
@@ -136,14 +133,15 @@ entity Product {=psl
   productionPlans ProductionPlanProducts[]
 psl=}
 
-entity ProductionPlanProducts {=psl
-  productionPlan   ProductionPlan @relation(fields: [productionPlanId], references: [id])
-  productionPlanId Int
-  product          Product        @relation(fields: [productId], references: [id])
-  productId        Int
-  productCount     Int
+entity ProductMaterials {=psl
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId       Int
+  material        Material @relation(fields: [materialId], references: [id])
+  materialId      Int
+  materialCount   Float
+  measurementUnit String
   
-  @@id([productionPlanId, productId])
+  @@id([productId, materialId])
 psl=}
 
 entity ProductionPlan {=psl
@@ -154,6 +152,16 @@ entity ProductionPlan {=psl
   status       String
   products     ProductionPlanProducts[]
   reservations Reservation[]
+psl=}
+
+entity ProductionPlanProducts {=psl
+  productionPlan   ProductionPlan @relation(fields: [productionPlanId], references: [id], onDelete: Cascade)
+  productionPlanId Int
+  product          Product        @relation(fields: [productId], references: [id])
+  productId        Int
+  productCount     Int
+  
+  @@id([productionPlanId, productId])
 psl=}
 
 entity Reservation {=psl
@@ -180,15 +188,15 @@ entity ReservationMaterials {=psl
 psl=}
 
 entity PurchaseRequest {=psl
-  id             Int       @id @default(autoincrement())
-  createdAt      DateTime  @default(now())
+  id             Int                        @id @default(autoincrement())
+  createdAt      DateTime                   @default(now())
   status         String
   processingDate DateTime?
   deliveryDate   DateTime?
   receiptDate    DateTime?
-  author         User      @relation(name: "createdBy", fields: [authorId], references: [id])
+  author         User                       @relation(name: "createdBy", fields: [authorId], references: [id])
   authorId       Int
-  processedBy    User?      @relation(name: "processedBy", fields: [processedById], references: [id])
+  processedBy    User?                      @relation(name: "processedBy", fields: [processedById], references: [id])
   processedById  Int?
   materials      PurchaseRequestMaterials[]
   purchaseOrders PurchaseOrder[]
@@ -222,12 +230,13 @@ entity PurchaseOrder {=psl
   supplierId             Int                  
   purchaseRequest        PurchaseRequest          @relation(fields: [purchaseRequestId], references: [id])
   purchaseRequestId      Int
-  supplierConfirmation   SupplierConfirmation? 
+  supplierConfirmation   SupplierConfirmation?
+  receipt                Receipt?
   materials              PurchaseOrderMaterials[]
 psl=}
 
 entity PurchaseOrderMaterials {=psl
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
   purchaseOrderId Int
   material        Material      @relation(fields: [materialId], references: [id])
   materialId      Int
@@ -245,7 +254,7 @@ entity SupplierConfirmation {=psl
   purchaseOrderId Int                             @unique
   supplier        Supplier                        @relation(fields: [supplierId], references: [id])
   supplierId      Int
-  materials       SupplierConfirmationMaterials[]    
+  materials       SupplierConfirmationMaterials[]
 psl=}
 
 entity SupplierConfirmationMaterials {=psl
@@ -257,6 +266,26 @@ entity SupplierConfirmationMaterials {=psl
   measurementUnit        String
 
   @@id([supplierConfirmationId, materialId])
+psl=}
+
+entity Receipt {=psl
+  id              Int                @id @default(autoincrement())
+  createdAt       DateTime           @default(now())
+  purchaseOrder   PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId Int                @unique
+  materials       ReceiptMaterials[]
+
+psl=}
+
+entity ReceiptMaterials {=psl
+  receipt         Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  receiptId       Int
+  material        Material @relation(fields: [materialId], references: [id])
+  materialId      Int
+  materialCount   Float
+  measurementUnit String
+
+  @@id([receiptId, materialId])
 psl=}
 
 // ----------------- User operations ------------------ //
@@ -308,8 +337,6 @@ crud ProductionPlans {
     getAll: {
       overrideFn: import { getProductionPlans } from "@src/productionPlans/operations/tasks.js"
     },
-    get: {},
-    update: {},
     delete: {}
   }
 }
@@ -351,6 +378,16 @@ crud PurchaseRequests {
 
 action createPurchaseRequest {
   fn: import { createPurchaseRequest } from "@src/purchaseRequests/operations/actions.js",
+  entities: [PurchaseRequest]
+}
+
+action updatePurchaseRequestProcessingDate {
+  fn: import { updatePurchaseRequestProcessingDate } from "@src/purchaseRequests/operations/actions.js",
+  entities: [PurchaseRequest]
+}
+
+action updatePurchaseRequestDeliveryDate {
+  fn: import { updatePurchaseRequestDeliveryDate } from "@src/purchaseRequests/operations/actions.js",
   entities: [PurchaseRequest]
 }
 
@@ -396,4 +433,18 @@ crud SupplierConfirmations {
 action createSupplierConfirmation {
   fn: import { createSupplierConfirmation } from "@src/supplierConfirmations/operations/actions.js",
   entities: [SupplierConfirmation]
+}
+
+crud Receipts {
+  entity: Receipt,
+  operations: {
+    getAll: {
+      overrideFn: import { getReceipts } from "@src/receipts/operations/tasks.js"
+    }
+  }
+}
+
+action createReceipt {
+  fn: import { createReceipt } from "@src/receipts/operations/actions.js",
+  entities: [Receipt]
 }

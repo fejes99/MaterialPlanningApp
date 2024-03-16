@@ -15,6 +15,9 @@ export const getMaterials: Materials.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      code: 'asc',
+    },
   });
 };
 

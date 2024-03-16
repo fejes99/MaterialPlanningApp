@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar, Button, Dropdown, Navbar } from 'flowbite-react';
 import { logout, useAuth } from 'wasp/client/auth';
@@ -11,9 +10,7 @@ const MainNavbar: React.FC = () => {
 
   return (
     <Navbar fluid rounded>
-      {/* <Navbar.Brand href='/'>
-        <img src='/logo.png' className='h-6 sm:h-9' alt='Material Planning App Logo' />
-      </Navbar.Brand> */}
+      <div />
       <div className='flex md:order-2'>
         {user ? (
           <Dropdown
@@ -38,9 +35,11 @@ const MainNavbar: React.FC = () => {
             <Dropdown.Item onClick={logout}>Izloguj se</Dropdown.Item>
           </Dropdown>
         ) : (
-          <Link to='/login'>
-            <Button>Uloguj se</Button>
-          </Link>
+          <>
+            <Link to='/login'>
+              <Button>Uloguj se</Button>
+            </Link>
+          </>
         )}
         <Navbar.Toggle />
       </div>
@@ -77,6 +76,9 @@ const MainNavbar: React.FC = () => {
           </Navbar.Link>
           <Navbar.Link href='/supplier-confirmations' className='text-lg'>
             Potvrde
+          </Navbar.Link>
+          <Navbar.Link href='/receipts' className='text-lg'>
+            Prijemnice
           </Navbar.Link>
         </Navbar.Collapse>
       )}

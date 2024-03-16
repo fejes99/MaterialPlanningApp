@@ -6,10 +6,11 @@ const SupplierConfirmationPage: React.FC = () => {
 
   if (isLoading) return 'Loading...';
   if (error) return 'Error: ' + error;
+
   return (
-    <>
+    <div className='h-screen'>
       <SupplierConfirmationTable confirmations={confirmations} />
-    </>
+    </div>
   );
 };
 

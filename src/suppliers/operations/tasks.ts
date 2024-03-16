@@ -15,5 +15,8 @@ export const getSuppliers: Suppliers.GetAllQuery<
       purchaseOrders: true,
       supplierConfirmations: true,
     },
+    orderBy: {
+      name: 'asc',
+    },
   });
 };

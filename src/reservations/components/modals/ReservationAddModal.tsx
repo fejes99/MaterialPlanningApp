@@ -82,7 +82,7 @@ const ReservationAddModal: React.FC = () => {
     materials?.find((material: any) => material.id === materialId);
 
   const calculateMaxCount = (mergedMaterial: any, materialInStorage: any) => {
-    const defaultCount = 0;
+    const defaultCount = 1;
     let materialCountInStorage = materialInStorage?.count || defaultCount;
 
     materialCountInStorage = convertUnit(

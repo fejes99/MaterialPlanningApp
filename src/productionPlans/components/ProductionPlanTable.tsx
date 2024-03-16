@@ -17,7 +17,7 @@ const ProductionPlanTable: React.FC<Props> = ({ productionPlans }) => {
   const handleDelete = (id: number) => deleteProductionPlan({ id });
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>

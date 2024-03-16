@@ -9,10 +9,10 @@ const SupplierPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       <SupplierAddModal />
       <SupplierTable suppliers={suppliers} />
-    </>
+    </div>
   );
 };
 

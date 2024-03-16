@@ -9,10 +9,10 @@ const ReservationPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       <ReservationAddModal />
       <ReservationTable reservations={reservations} />
-    </>
+    </div>
   );
 };
 export default ReservationPage;

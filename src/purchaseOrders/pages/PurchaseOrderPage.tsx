@@ -12,10 +12,10 @@ const PurchaseOrderPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       <PurchaseOrderAddModal />
       <PurchaseOrderTable purchaseOrders={purchaseOrders} />
-    </>
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import {
   type Supplier,
   type SupplierConfirmation,
   type PurchaseRequest,
+  type Receipt,
   type PurchaseOrderMaterials,
   type Material,
 } from 'wasp/entities';
@@ -15,15 +16,16 @@ interface Props {
   purchaseOrders: (PurchaseOrder & {
     user: User;
     supplier: Supplier;
-    supplierConfirmation: SupplierConfirmation;
+    supplierConfirmation: SupplierConfirmation | null;
     purchaseRequest: PurchaseRequest;
+    receipt: Receipt | null;
     materials: (PurchaseOrderMaterials & { material: Material })[];
   })[];
 }
 
 const PurchaseOrderTable: React.FC<Props> = ({ purchaseOrders }) => {
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
           <Table.HeadCell>Šifra</Table.HeadCell>

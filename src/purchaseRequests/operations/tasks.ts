@@ -26,5 +26,8 @@ export const getPurchaseRequests: PurchaseRequests.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      id: 'desc',
+    },
   });
 };

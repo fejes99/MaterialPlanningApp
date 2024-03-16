@@ -12,10 +12,10 @@ const PurchaseRequestPage: React.FC = () => {
   if (error) return 'Error: ' + error;
 
   return (
-    <>
+    <div className='h-screen'>
       {isPlanner(user) && <PurchaseRequestAddModal />}
       <PurchaseRequestTable purchaseRequests={purchaseRequests} />
-    </>
+    </div>
   );
 };
 

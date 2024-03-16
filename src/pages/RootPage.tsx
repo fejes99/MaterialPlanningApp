@@ -1,4 +1,3 @@
-import React from 'react';
 import Navbar from '../common/components/ui/Navbar/MainNavbar';
 
 type Props = {

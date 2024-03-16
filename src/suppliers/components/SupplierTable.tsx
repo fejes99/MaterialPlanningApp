@@ -12,13 +12,13 @@ interface Props {
 
 const SupplierTable: React.FC<Props> = ({ suppliers }) => {
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto h-full'>
       <Table hoverable>
         <Table.Head>
-        <Table.HeadCell>Šifra</Table.HeadCell>
+          <Table.HeadCell>Šifra</Table.HeadCell>
           <Table.HeadCell>Naziv</Table.HeadCell>
           <Table.HeadCell>Adresa</Table.HeadCell>
-          <Table.HeadCell>Porudžbenice</Table.HeadCell>
+          <Table.HeadCell>Porudžbine</Table.HeadCell>
           <Table.HeadCell>Potvrde</Table.HeadCell>
         </Table.Head>
         <Table.Body className='divide-y'>
@@ -33,7 +33,10 @@ const SupplierTable: React.FC<Props> = ({ suppliers }) => {
               );
 
               return (
-                <Table.Row>
+                <Table.Row
+                  key={supplier.id}
+                  className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                >
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     {supplier.id}
                   </Table.Cell>
@@ -44,7 +47,7 @@ const SupplierTable: React.FC<Props> = ({ suppliers }) => {
                     {supplier.address}
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
-                    <Dropdown label='Porudžbenice' values={purchaseOrders} />
+                    <Dropdown label='Porudžbine' values={purchaseOrders} />
                   </Table.Cell>
                   <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
                     <Dropdown label='Potvrde' values={supplierConfirmations} />

@@ -27,5 +27,8 @@ export const getReservations: Reservations.GetAllQuery<
         },
       },
     },
+    orderBy: {
+      id: 'desc',
+    },
   });
 };
