@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Avatar, Button, Dropdown, Navbar } from 'flowbite-react';
 import { logout, useAuth } from 'wasp/client/auth';
 import { UserRole } from '../../../../user/types/UserRole';
@@ -45,41 +45,41 @@ const MainNavbar: React.FC = () => {
       </div>
       {isPlanner(user) && (
         <Navbar.Collapse>
-          <Navbar.Link href='/materials' className='text-lg'>
+          <NavLink activeClassName='text-blue-500' to='/materials' className='text-lg'>
             Materijali
-          </Navbar.Link>
-          <Navbar.Link href='/products' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/products' className='text-lg'>
             Proizvodi
-          </Navbar.Link>
-          <Navbar.Link href='/production-plans' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/production-plans' className='text-lg'>
             Proizvodni planovi
-          </Navbar.Link>
-          <Navbar.Link href='/reservations' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/reservations' className='text-lg'>
             Rezervacije
-          </Navbar.Link>
-          <Navbar.Link href='/purchase-requests' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/purchase-requests' className='text-lg'>
             Zahtevi
-          </Navbar.Link>
+          </NavLink>
         </Navbar.Collapse>
       )}
 
       {isBuyer(user) && (
         <Navbar.Collapse>
-          <Navbar.Link href='/purchase-requests' className='text-lg'>
+          <NavLink activeClassName='text-blue-500' to='/purchase-requests' className='text-lg'>
             Zahtevi
-          </Navbar.Link>
-          <Navbar.Link href='/purchase-orders' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/purchase-orders' className='text-lg'>
             Porudžbine
-          </Navbar.Link>
-          <Navbar.Link href='/suppliers' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/suppliers' className='text-lg'>
             Dobavljači
-          </Navbar.Link>
-          <Navbar.Link href='/supplier-confirmations' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/supplier-confirmations' className='text-lg'>
             Potvrde
-          </Navbar.Link>
-          <Navbar.Link href='/receipts' className='text-lg'>
+          </NavLink>
+          <NavLink activeClassName='text-blue-500' to='/receipts' className='text-lg'>
             Prijemnice
-          </Navbar.Link>
+          </NavLink>
         </Navbar.Collapse>
       )}
     </Navbar>
